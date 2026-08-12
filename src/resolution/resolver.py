@@ -6,6 +6,7 @@ from ..domain.schemas.task import TaskRequirements
 from ..domain.schemas.tool import ToolProfile
 from ..domain.schemas.user_policy import UserPolicy, PrivacyLevel
 from ..domain.scoring import calculate_effective_capability
+from ..domain.contract.registry import RuntimeRegistry
 from ..discovery.inventory import HostInventory
 
 class ExecutionProfileResolver:
@@ -54,20 +55,40 @@ class ExecutionProfileResolver:
         candidates = []
         explainability = {}
 
-        # For MVP, assume Agent Zero is the only runtime
+        # Resolve runtime adapter from registry
         runtime_id = "agent_zero"
+        adapter_cls = RuntimeRegistry.get_adapter(runtime_id)
+        if not adapter_cls:
+            explainability[runtime_id] = f"Excluded: Runtime adapter '{runtime_id}' not registered."
+            return candidates, explainability
+
+        runtime_adapter = adapter_cls()
+        runtime_caps = runtime_adapter.capabilities()
+
         if not inventory.os_environment.get("docker_running", False):
             explainability[runtime_id] = "Excluded: Docker not running."
             return candidates, explainability
 
+        # Evaluate capability fulfillment across execution profile
+        has_browser = runtime_caps.provides_browser or any(getattr(t, 'provides_browser', False) for t in tools_subset)
+        has_code_exec = runtime_caps.provides_code_execution or any(getattr(t, 'provides_code_execution', False) for t in tools_subset)
+        has_filesystem = runtime_caps.provides_filesystem or any(getattr(t, 'provides_filesystem', False) for t in tools_subset)
+
         for model in inventory.models:
             reasoning = []
-            
-            # Capability failure check
-            if requirements.browser and model.capabilities.tool_calling < 0.2:
-                # E.g. local model lacks tool calling
-                explainability[model.id] = f"Excluded: Model cannot satisfy multi-tool requirement."
-                continue
+
+            # Browser requirement check
+            if requirements.browser and not has_browser:
+                # If neither runtime nor tools provide browser, model MUST have native tool calling
+                if model.capabilities.tool_calling < 0.2:
+                    explainability[model.id] = f"Excluded: Browser capability required, but neither runtime '{runtime_id}', tools, nor model satisfy it."
+                    continue
+
+            # Native tool calling requirement check (if runtime strictly requires model native tool-calling)
+            if runtime_caps.requires_native_tool_calling:
+                if model.capabilities.tool_calling < 0.2 or model.evidence.confidence <= 0.40:
+                    explainability[model.id] = f"Excluded: Runtime '{runtime_id}' requires verified native model tool-calling (Model confidence: {model.evidence.confidence:.2f})."
+                    continue
             
             # Check privacy constraint from task or policy
             if model.provider.type == "cloud":
@@ -93,6 +114,11 @@ class ExecutionProfileResolver:
             score = self._score_model(model, requirements, policy)
             mode = model.provider.type
             
+            eff_cap = calculate_effective_capability(
+                model.capabilities.tool_calling if requirements.browser else model.capabilities.coding,
+                model.evidence.confidence
+            )
+            
             profile = ExecutionProfile(
                 runtime_id=runtime_id,
                 model=model,
@@ -100,22 +126,31 @@ class ExecutionProfileResolver:
                 tools=tools_subset,
                 mode=mode,
                 privacy_posture="local-only" if mode == "local" else "cloud-hybrid",
-                reliability_score=model.evidence.confidence
+                reliability_score=eff_cap
             )
             
             candidates.append((score, profile))
+
+            # Build explicit capability provenance trace
+            gpu_str = inventory.hardware.gpu_model if inventory.hardware.gpu_model else "CPU"
+            mem_str = f"{inventory.hardware.vram_gb:.1f} GB VRAM" if inventory.hardware.vram_gb else f"{inventory.hardware.ram_gb:.1f} GB RAM"
+
+            reasoning.append(f"Score: {score:.2f}")
+            if requirements.browser:
+                browser_src = f"{runtime_id} runtime" if runtime_caps.provides_browser else "Model"
+                reasoning.append(f"Browser -> {browser_src}")
+            if requirements.code_execution:
+                code_src = f"{runtime_id} runtime" if runtime_caps.provides_code_execution else "Model"
+                reasoning.append(f"Code execution -> {code_src}")
+            if requirements.filesystem:
+                fs_src = f"{runtime_id} runtime" if runtime_caps.provides_filesystem else "Model"
+                reasoning.append(f"Filesystem -> {fs_src}")
+
+            reasoning.append(f"Coding -> {model.id}")
+            reasoning.append(f"Hardware -> {gpu_str} ({mem_str} available)")
+
             if model.evidence.confidence <= 0.40:
-                reasoning.append(f"[WARN] Capability not verified (Confidence: {model.evidence.confidence:.2f})")
-            else:
-                reasoning.append(f"Score: {score:.2f}")
-                reasoning.append(f"Hardware fit: PASS")
-                reasoning.append(f"Capabilities fit: PASS")
-                
-                # Policy explanations
-                if mode == "local" and policy.local_preferred:
-                    reasoning.append("Local model is sufficient -> use local.")
-                elif mode == "cloud" and policy.local_preferred:
-                    reasoning.append("Local model could not satisfy requirements -> cloud fallback required.")
+                reasoning.append(f"[WARN] Model capability not empirically verified (Confidence: {model.evidence.confidence:.2f})")
                 
             explainability[model.id] = reasoning
 

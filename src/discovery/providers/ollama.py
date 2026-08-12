@@ -45,6 +45,10 @@ class OllamaProviderAdapter(BaseProviderAdapter):
 
         for item in tags:
             name = item.get("name", "unknown")
+            # Skip non-generative embedding models
+            if "bge" in name.lower() or "embed" in name.lower():
+                continue
+                
             size_bytes = item.get("size", 0)
             digest = item.get("digest", "")
             

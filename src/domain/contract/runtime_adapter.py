@@ -23,6 +23,10 @@ class HealthStatus(BaseModel):
 
 class CapabilitySet(BaseModel):
     supported_features: List[str]
+    provides_browser: bool = False
+    provides_code_execution: bool = False
+    provides_filesystem: bool = False
+    requires_native_tool_calling: bool = False
 
 class ModelList(BaseModel):
     models: List[ModelProfile]
