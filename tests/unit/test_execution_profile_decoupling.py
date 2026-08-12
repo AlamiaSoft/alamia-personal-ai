@@ -142,5 +142,42 @@ class TestExecutionProfileDecoupling(unittest.TestCase):
         profiles, explain = resolver.resolve(self.inventory, reqs, [])
         self.assertEqual(len(profiles), 1)
 
+    def test_6_inventory_order_cannot_determine_winner(self):
+        """Prove that inventory list order cannot determine the winner when unverified models are resolved."""
+        m_small = ModelProfile(
+            id="ollama/small:1b",
+            provider=ProviderInfo(id="ollama", type="local"),
+            hardware=HardwareRequirements(vram_required_gb=1.0),
+            capabilities=Capabilities(),
+            context=Context(window=32768),
+            economics=Economics(),
+            limits=Limits(),
+            evidence=Evidence(source="runtime_metadata", tested=False, confidence=0.0)
+        )
+        m_large = ModelProfile(
+            id="ollama/large:14b",
+            provider=ProviderInfo(id="ollama", type="local"),
+            hardware=HardwareRequirements(vram_required_gb=10.0),
+            capabilities=Capabilities(),
+            context=Context(window=131072),
+            economics=Economics(),
+            limits=Limits(),
+            evidence=Evidence(source="runtime_metadata", tested=False, confidence=0.0)
+        )
+        
+        # Order A: Small first, Large second
+        inv_a = HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[m_small, m_large])
+        # Order B: Large first, Small second
+        inv_b = HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[m_large, m_small])
+        
+        resolver = ExecutionProfileResolver()
+        reqs = TaskRequirements(code_execution=True)
+        
+        profiles_a, _ = resolver.resolve(inv_a, reqs, [])
+        profiles_b, _ = resolver.resolve(inv_b, reqs, [])
+        
+        self.assertEqual(profiles_a[0].model.id, "ollama/large:14b", "Objective structural fit (131k context, 10GB VRAM) must win regardless of initial list order")
+        self.assertEqual(profiles_b[0].model.id, "ollama/large:14b", "Objective structural fit (131k context, 10GB VRAM) must win regardless of initial list order")
+
 if __name__ == "__main__":
     unittest.main()

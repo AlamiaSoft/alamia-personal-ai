@@ -13,16 +13,28 @@ class ExecutionProfileResolver:
     def __init__(self):
         pass
 
-    def _score_model(self, model: ModelProfile, requirements: TaskRequirements, policy: UserPolicy) -> float:
+    def _score_model(self, model: ModelProfile, requirements: TaskRequirements, policy: UserPolicy, inventory: Optional[HostInventory] = None) -> float:
         score = 0.0
         
-        # Capability fit
-        if requirements.code_execution:
-            score += calculate_effective_capability(model.capabilities.coding, model.evidence.confidence) * 2
-        if requirements.browser:
-            score += calculate_effective_capability(model.capabilities.tool_calling, model.evidence.confidence) * 1.5
+        # Tier 1: Empirically verified capability evidence (Confidence > 0.40)
+        if model.evidence.confidence > 0.40:
+            if requirements.code_execution:
+                score += calculate_effective_capability(model.capabilities.coding, model.evidence.confidence) * 2.0
+            if requirements.browser:
+                score += calculate_effective_capability(model.capabilities.tool_calling, model.evidence.confidence) * 1.5
+            score += calculate_effective_capability(model.capabilities.reasoning, model.evidence.confidence)
+        else:
+            # Tier 2: Objective Structural / Runtime Fit when empirical evidence is UNKNOWN (Confidence <= 0.40)
+            # NO Model ID Name Heuristics! Driven strictly by discovered metadata facts & derived estimates.
             
-        score += calculate_effective_capability(model.capabilities.reasoning, model.evidence.confidence)
+            # A. Context Window Fit (discovers context capacity for agent reasoning)
+            if model.context.window:
+                score += min(0.30, (model.context.window / 128000.0) * 0.30)
+                
+            # B. Hardware Capacity & Estimated VRAM Fit (discovers artifact byte size & parameter capacity)
+            if model.provider.type == "local" and model.hardware.vram_required_gb and inventory and inventory.hardware.vram_gb:
+                vram_ratio = min(1.0, model.hardware.vram_required_gb / inventory.hardware.vram_gb)
+                score += vram_ratio * 0.30
         
         # Cost penalty and policy logic
         if model.provider.type == "cloud":
@@ -34,7 +46,7 @@ class ExecutionProfileResolver:
         
         # Preference bonus (only granted if capability evidence is verified)
         if policy.local_preferred and model.provider.type == "local" and model.evidence.confidence > 0.40:
-            score += 0.5 # Give verified local models a strong edge
+            score += 0.5
             
         return score
 
@@ -71,8 +83,6 @@ class ExecutionProfileResolver:
 
         # Evaluate capability fulfillment across execution profile
         has_browser = runtime_caps.provides_browser or any(getattr(t, 'provides_browser', False) for t in tools_subset)
-        has_code_exec = runtime_caps.provides_code_execution or any(getattr(t, 'provides_code_execution', False) for t in tools_subset)
-        has_filesystem = runtime_caps.provides_filesystem or any(getattr(t, 'provides_filesystem', False) for t in tools_subset)
 
         for model in inventory.models:
             reasoning = []
@@ -111,7 +121,7 @@ class ExecutionProfileResolver:
                     explainability[model.id] = f"Excluded: VRAM required ({model.hardware.vram_required_gb}GB) > available ({vram_avail}GB)."
                     continue
             
-            score = self._score_model(model, requirements, policy)
+            score = self._score_model(model, requirements, policy, inventory)
             mode = model.provider.type
             
             eff_cap = calculate_effective_capability(
@@ -150,12 +160,20 @@ class ExecutionProfileResolver:
             reasoning.append(f"Hardware -> {gpu_str} ({mem_str} available)")
 
             if model.evidence.confidence <= 0.40:
-                reasoning.append(f"[WARN] Model capability not empirically verified (Confidence: {model.evidence.confidence:.2f})")
+                reasoning.append(f"[WARN] Best structural candidate - capability unverified (Confidence: {model.evidence.confidence:.2f})")
                 
             explainability[model.id] = reasoning
 
-        # Sort descending by score
-        candidates.sort(key=lambda x: x[0], reverse=True)
+        # Sort descending deterministically by score, then context window, then VRAM required
+        # Guarantees list ordering in inventory cannot determine the winner
+        candidates.sort(
+            key=lambda x: (
+                round(x[0], 4), 
+                x[1].model.context.window or 0, 
+                x[1].model.hardware.vram_required_gb or 0.0
+            ), 
+            reverse=True
+        )
         ranked_profiles = [p for _, p in candidates]
         
         return ranked_profiles, explainability
