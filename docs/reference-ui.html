@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="nova">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c14" id="theme-color-meta">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Your Agent">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Your%20Agent","short_name":"Agent","display":"standalone","start_url":".","background_color":"%230b0c14","theme_color":"%238b7cf6","icons":[{"src":"data:image/svg%2Bxml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%238b7cf6%27/%3E%3Ctext x=%2750%27 y=%2766%27 font-size=%2755%27 text-anchor=%27middle%27 fill=%27white%27%3E%E2%9C%A6%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg%2Bxml"}]}'>
+<title>Your Agent — Interactive Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;1,500&family=Baloo+2:wght@500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Bungee&family=Quicksand:wght@500;600;700&family=Orbitron:wght@500;700;900&family=Anton&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============ RESET ============ */
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+button { font:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+input, textarea { font:inherit; color:inherit; }
+ul { list-style:none; }
+a { color:inherit; text-decoration:none; }
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+
+/* ============ THEME TOKENS ============ */
+
+/* ---- NOVA: professional, indigo/violet dark, the "Claude-esque" default ---- */
+html[data-theme="nova"]{
+  --bg:#0b0c14; --bg-2:#12141f; --bg-card:#161826; --bg-card-hi:#1c1f30;
+  --text:#f2f2f7; --text-dim:#9a9db3; --text-faint:#666a82;
+  --accent:#8b7cf6; --accent-2:#5b8cff; --accent-soft:#8b7cf61f;
+  --border:#232537; --border-strong:#33364d;
+  --good:#3ddc97; --warn:#f6c453; --bad:#ff6b6b;
+  --radius:16px; --radius-sm:10px;
+  --font-display:'Space Grotesk', sans-serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --grad: radial-gradient(120% 140% at 100% 0%, #2a2450 0%, #0b0c14 55%);
+  --card-shadow: 0 20px 60px -20px rgba(0,0,0,.6);
+  --tracking-display: -0.02em;
+  --motif: "◆";
+}
+
+/* ---- BLOOM: soft fashion / lifestyle pastel ---- */
+html[data-theme="bloom"]{
+  --bg:#fdf3f6; --bg-2:#fbe8ee; --bg-card:#ffffff; --bg-card-hi:#fff5f8;
+  --text:#3d2a35; --text-dim:#8a6b78; --text-faint:#b998a6;
+  --accent:#e8628f; --accent-2:#c9a6ff; --accent-soft:#e8628f22;
+  --border:#f3dbe4; --border-strong:#e9bccd;
+  --good:#5fb98a; --warn:#e2a13a; --bad:#e0607a;
+  --radius:22px; --radius-sm:14px;
+  --font-display:'Fraunces', serif; --font-body:'Quicksand', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --grad: radial-gradient(120% 140% at 0% 0%, #ffe3ec 0%, #fdf3f6 55%);
+  --card-shadow: 0 20px 50px -25px rgba(232,98,143,.35);
+  --tracking-display: 0em;
+  --motif: "✿";
+}
+
+/* ---- HALFTONE: bold comic / pop-art ---- */
+html[data-theme="halftone"]{
+  --bg:#fff6e0; --bg-2:#ffe9a8; --bg-card:#ffffff; --bg-card-hi:#fff1cf;
+  --text:#1a1a1a; --text-dim:#4a4a4a; --text-faint:#8a8578;
+  --accent:#ff3d5a; --accent-2:#0a6cff; --accent-soft:#ff3d5a22;
+  --border:#1a1a1a; --border-strong:#1a1a1a;
+  --good:#1fa35c; --warn:#ffb703; --bad:#ff3d5a;
+  --radius:6px; --radius-sm:4px;
+  --font-display:'Bungee', cursive; --font-body:'Baloo 2', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --grad: radial-gradient(circle at 15% 10%, #fff1cf 0%, #fff6e0 45%);
+  --card-shadow: 5px 5px 0 var(--border);
+  --tracking-display: 0.01em;
+  --motif: "★";
+}
+
+/* ---- TERRA: calm nature / earth ---- */
+html[data-theme="terra"]{
+  --bg:#f4f1e8; --bg-2:#e9e2cd; --bg-card:#fbf9f1; --bg-card-hi:#f1ecdc;
+  --text:#2e2a1f; --text-dim:#6b6350; --text-faint:#9a9078;
+  --accent:#5c7a4f; --accent-2:#b5793a; --accent-soft:#5c7a4f22;
+  --border:#ddd4b8; --border-strong:#c7bb95;
+  --good:#5c7a4f; --warn:#b5793a; --bad:#a44a3f;
+  --radius:12px; --radius-sm:8px;
+  --font-display:'DM Serif Display', serif; --font-body:'Inter', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --grad: radial-gradient(120% 140% at 100% 0%, #eee6cc 0%, #f4f1e8 55%);
+  --card-shadow: 0 16px 40px -22px rgba(60,50,20,.35);
+  --tracking-display: 0em;
+  --motif: "❦";
+}
+
+/* ---- ARCADE: neon dark gamer ---- */
+html[data-theme="arcade"]{
+  --bg:#07060f; --bg-2:#0e0c1c; --bg-card:#121027; --bg-card-hi:#181433;
+  --text:#eafcff; --text-dim:#8d8fc9; --text-faint:#585a86;
+  --accent:#00f0ff; --accent-2:#ff2ec4; --accent-soft:#00f0ff22;
+  --border:#241f45; --border-strong:#3a3170;
+  --good:#39ff88; --warn:#ffe14d; --bad:#ff4d6a;
+  --radius:8px; --radius-sm:6px;
+  --font-display:'Orbitron', sans-serif; --font-body:'Space Grotesk', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --grad: radial-gradient(120% 140% at 50% -10%, #24124a 0%, #07060f 60%);
+  --card-shadow: 0 0 0 1px var(--border), 0 0 30px -10px var(--accent);
+  --tracking-display: 0.04em;
+  --motif: "▲";
+}
+
+/* ---- INK: manga / anime, bold linework, screentone ---- */
+html[data-theme="ink"]{
+  --bg:#fafafa; --bg-2:#efeff0; --bg-card:#ffffff; --bg-card-hi:#f6f6f7;
+  --text:#121212; --text-dim:#565656; --text-faint:#9a9a9a;
+  --accent:#e6002e; --accent-2:#ff7fb0; --accent-soft:#e6002e1a;
+  --border:#1a1a1a; --border-strong:#1a1a1a;
+  --good:#0a9c4a; --warn:#e6a400; --bad:#e6002e;
+  --radius:4px; --radius-sm:3px;
+  --font-display:'Anton', 'Zen Kaku Gothic New', sans-serif; --font-body:'Zen Kaku Gothic New', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  --grad: repeating-radial-gradient(circle at 0 0, #00000008 0, #00000008 1px, transparent 1px, transparent 6px), radial-gradient(120% 140% at 100% 0%, #fff 0%, #fafafa 60%);
+  --card-shadow: 3px 3px 0 var(--border);
+  --tracking-display: 0.01em;
+  --motif: "✺";
+}
+
+/* ============ BASE LAYOUT ============ */
+body{
+  font-family: var(--font-body);
+  background: var(--grad), var(--bg);
+  color: var(--text);
+  min-height:100vh;
+  display:flex;
+  transition: background .35s ease, color .35s ease;
+}
+h1,h2,h3,.display{ font-family: var(--font-display); letter-spacing: var(--tracking-display); }
+
+/* ---- Sidebar (desktop: icon rail · mobile: off-canvas drawer) ---- */
+.sidebar{
+  width:74px; flex-shrink:0; background:var(--bg-2); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; padding:18px 0; gap:6px;
+  position:sticky; top:0; height:100vh; z-index:210;
+}
+.sidebar .sidebar-head{ display:flex; align-items:center; gap:10px; margin-bottom:22px; width:100%; padding:0 14px; justify-content:center; }
+.sidebar .brand{
+  width:40px; height:40px; border-radius:var(--radius-sm); background:var(--accent);
+  display:flex; align-items:center; justify-content:center; color:#fff;
+  box-shadow: 0 0 0 4px var(--accent-soft); flex-shrink:0;
+}
+.sidebar .brand svg{ width:20px; height:20px; }
+.drawer-close{ display:none; width:32px; height:32px; border-radius:8px; align-items:center; justify-content:center; color:var(--text-dim); margin-left:auto; }
+.nav-item{
+  width:48px; height:48px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center;
+  color:var(--text-faint); position:relative; transition:.15s; flex-shrink:0;
+}
+.nav-item svg{ width:20px; height:20px; stroke-width:2; }
+.nav-item:hover{ color:var(--text); background:var(--bg-card); }
+.nav-item.active{ color:#fff; background:var(--accent); }
+.nav-item .tip{
+  position:absolute; left:60px; top:50%; transform:translateY(-50%);
+  background:var(--bg-card-hi); border:1px solid var(--border); color:var(--text);
+  padding:5px 10px; border-radius:8px; font-size:12px; font-family:var(--font-body); white-space:nowrap;
+  opacity:0; pointer-events:none; transition:.15s; z-index:50; box-shadow:var(--card-shadow);
+}
+.nav-item:hover .tip{ opacity:1; }
+.nav-label{ display:none; }
+.sidebar .spacer{ flex:1; }
+.drawer-backdrop{ display:none; }
+
+/* ---- Topbar ---- */
+.hamburger-btn{ display:none; width:38px; height:38px; border-radius:10px; align-items:center; justify-content:center; color:var(--text); background:var(--bg-card); border:1px solid var(--border); flex-shrink:0; }
+.hamburger-btn svg{ width:19px; height:19px; }
+.theme-toggle-btn{ display:none; width:38px; height:38px; border-radius:10px; align-items:center; justify-content:center; color:var(--text); background:var(--bg-card); border:1px solid var(--border); flex-shrink:0; position:relative; }
+.theme-toggle-btn svg{ width:18px; height:18px; }
+.theme-sheet{ position:absolute; top:calc(100% + 8px); right:0; background:var(--bg-card-hi); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; box-shadow:var(--card-shadow); display:none; grid-template-columns:repeat(3,1fr); gap:10px; z-index:220; }
+.theme-sheet.open{ display:grid; }
+
+/* ---- Mobile breakpoint: sidebar → drawer ---- */
+@media (max-width:860px){
+  .sidebar{
+    position:fixed; left:0; top:0; width:250px; height:100vh; padding:18px 14px;
+    transform:translateX(-100%); transition:transform .25s ease; box-shadow:0 0 40px rgba(0,0,0,.35);
+    align-items:stretch;
+  }
+  .sidebar.open{ transform:translateX(0); }
+  .sidebar .sidebar-head{ justify-content:flex-start; padding:0 4px; }
+  .drawer-close{ display:flex; }
+  .nav-item{ width:100%; height:auto; justify-content:flex-start; gap:12px; padding:11px 12px; }
+  .nav-label{ display:inline; font-size:14px; font-weight:500; font-family:var(--font-body); }
+  .nav-item .tip{ display:none; }
+  .hamburger-btn{ display:flex; }
+  .theme-picker{ display:none; }
+  .theme-toggle-btn{ display:flex; }
+  .drawer-backdrop{
+    display:block; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200;
+    opacity:0; pointer-events:none; transition:opacity .2s ease;
+  }
+  .drawer-backdrop.open{ opacity:1; pointer-events:auto; }
+  .content{ padding:18px; }
+  .topbar{ padding:14px 16px; }
+}
+
+/* ---- Main ---- */
+.main{ flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+.topbar{
+  display:flex; align-items:center; justify-content:space-between; padding:16px 28px;
+  border-bottom:1px solid var(--border); flex-shrink:0; gap:16px;
+}
+.topbar .screen-title{ font-size:15px; color:var(--text-dim); display:flex; align-items:center; gap:8px; }
+.topbar .screen-title b{ color:var(--text); font-weight:600; }
+.theme-picker{ display:flex; align-items:center; gap:8px; }
+.swatch{
+  width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer; position:relative;
+  transition:.15s;
+}
+.swatch.active{ border-color:var(--text); transform:scale(1.12); }
+.swatch[data-t="nova"]{ background:linear-gradient(135deg,#8b7cf6,#0b0c14); }
+.swatch[data-t="bloom"]{ background:linear-gradient(135deg,#e8628f,#fdf3f6); }
+.swatch[data-t="halftone"]{ background:linear-gradient(135deg,#ff3d5a,#ffe9a8); }
+.swatch[data-t="terra"]{ background:linear-gradient(135deg,#5c7a4f,#f4f1e8); }
+.swatch[data-t="arcade"]{ background:linear-gradient(135deg,#00f0ff,#07060f); }
+.swatch[data-t="ink"]{ background:linear-gradient(135deg,#e6002e,#ffffff); border:2px solid #1a1a1a; }
+
+.content{ flex:1; overflow-y:auto; padding:28px; }
+.screen{ display:none; max-width:1180px; margin:0 auto; animation:fade .25s ease; }
+.screen.active{ display:block; }
+@keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+/* ---- Shared components ---- */
+.card{
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px; box-shadow:var(--card-shadow);
+}
+.grid{ display:grid; gap:16px; }
+.g2{ grid-template-columns:1fr 1fr; }
+.g3{ grid-template-columns:1.3fr 1fr 1fr; }
+.g-auto{ grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); }
+@media (max-width:820px){ .g2,.g3{ grid-template-columns:1fr; } }
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:999px;
+  background:var(--accent); color:#fff; font-weight:600; font-size:14px; transition:.15s; border:1px solid transparent;
+}
+html[data-theme="halftone"] .btn, html[data-theme="ink"] .btn{ border-radius:var(--radius-sm); border:2px solid var(--border); box-shadow:3px 3px 0 var(--border); }
+html[data-theme="ink"] .card{ border-width:2px; }
+.btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+.btn.ghost{ background:transparent; border:1px solid var(--border-strong); color:var(--text); }
+.btn.sm{ padding:6px 14px; font-size:12.5px; }
+.pill{ display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:999px; font-size:11.5px; font-weight:600; }
+.pill.on{ background:var(--good); color:#08150e; }
+.pill.off{ background:var(--border); color:var(--text-dim); }
+.dot{ width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+h2.section-title{ font-size:22px; margin-bottom:4px; }
+.section-sub{ color:var(--text-dim); font-size:14px; margin-bottom:20px; }
+
+/* ============ SCREEN: DASHBOARD ============ */
+.hero-greet{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; gap:16px; }
+@media (max-width:860px){ .hero-greet{ flex-wrap:wrap; } .hero-greet h1{ font-size:24px; } }
+.hero-greet h1{ font-size:30px; margin-bottom:6px; }
+.hero-greet p{ color:var(--text-dim); font-size:14.5px; max-width:440px; }
+.ask-box{
+  display:flex; align-items:center; gap:10px; background:var(--bg-card); border:1px solid var(--border-strong);
+  border-radius:999px; padding:14px 20px; margin-bottom:22px; box-shadow:var(--card-shadow);
+}
+.ask-box input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-size:14.5px; }
+.ask-box input::placeholder{ color:var(--text-faint); }
+.suggest-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:26px; }
+.suggest-chip{
+  background:var(--bg-card); border:1px solid var(--border); padding:9px 15px; border-radius:999px; font-size:13px;
+  color:var(--text-dim); transition:.15s;
+}
+.suggest-chip:hover{ color:var(--text); border-color:var(--accent); }
+.suggest-chip.chip-match{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+.card h3{ font-size:14.5px; display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+.card h3 .count{ margin-left:auto; font-size:11.5px; color:var(--text-faint); font-weight:500; }
+.email-row, .autom-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); }
+.email-row:last-child, .autom-row:last-child{ border-bottom:none; }
+.avatar-dot{ width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+.line{ height:8px; border-radius:4px; background:var(--border); flex:1; }
+.line.sm{ width:60%; }
+.summary-banner{
+  background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent); border-radius:var(--radius-sm);
+  padding:9px 14px; font-size:12.5px; font-weight:600; margin-top:10px;
+}
+.cal-row{ display:flex; align-items:center; gap:10px; font-size:12.5px; padding:6px 0; color:var(--text-dim); }
+.cal-row .bar{ height:22px; flex:1; border-radius:6px; background:var(--border); position:relative; }
+.cal-row .bar.filled{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+.focus-ring{ width:76px; height:76px; border-radius:50%; background:conic-gradient(var(--accent) 0 86%, var(--border) 86% 100%); display:flex; align-items:center; justify-content:center; }
+.focus-ring span{ width:58px; height:58px; border-radius:50%; background:var(--bg-card); display:flex; align-items:center; justify-content:center; font-weight:700; font-family:var(--font-display); font-size:15px; }
+.check-row{ display:flex; align-items:center; gap:10px; font-size:13.5px; padding:6px 0; }
+.check-row .box{ width:16px; height:16px; border-radius:4px; border:1.5px solid var(--border-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; }
+.check-row.done .box{ background:var(--good); border-color:var(--good); color:#08150e; }
+.check-row.done span{ text-decoration:line-through; color:var(--text-faint); }
+
+/* ============ SCREEN: ONBOARDING ============ */
+.wizard{ max-width:640px; margin:10px auto 0; }
+.steps-track{ display:flex; align-items:center; gap:6px; margin-bottom:30px; }
+.step-dot{ flex:1; height:4px; border-radius:4px; background:var(--border); }
+.step-dot.done{ background:var(--accent); }
+.wiz-card{ min-height:360px; display:flex; flex-direction:column; }
+.wiz-card h2{ font-size:24px; margin-bottom:8px; }
+.wiz-card p.sub{ color:var(--text-dim); font-size:14px; margin-bottom:22px; }
+.detect-row{ display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.detect-row:last-child{ border:none; }
+.check-badge{ color:var(--good); font-weight:700; display:flex; align-items:center; gap:6px; font-size:12.5px; }
+.opt-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px; }
+.opt-card{
+  border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px; cursor:pointer; transition:.15s;
+}
+.opt-card:hover{ border-color:var(--accent); }
+.opt-card.selected{ border-color:var(--accent); background:var(--accent-soft); }
+.opt-card .oc-title{ font-weight:600; font-size:14px; margin-bottom:3px; }
+.opt-card .oc-sub{ font-size:12px; color:var(--text-dim); }
+.toggle-list-item{ display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; }
+.toggle-list-item .tli-left{ display:flex; align-items:center; gap:10px; font-size:14px; font-weight:500; }
+.switch{ width:38px; height:22px; border-radius:99px; background:var(--border); position:relative; transition:.2s; flex-shrink:0; }
+.switch::after{ content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:var(--bg-card); transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.switch.on{ background:var(--accent); }
+.switch.on::after{ left:18px; background:#fff; }
+.wiz-nav{ margin-top:auto; padding-top:22px; display:flex; justify-content:space-between; align-items:center; }
+.wiz-progress-label{ font-size:12px; color:var(--text-faint); }
+
+/* ============ SCREEN: CHAT ============ */
+.chat-wrap{ display:flex; flex-direction:column; height:calc(100vh - 150px); max-width:760px; margin:0 auto; }
+@media (max-width:860px){ .chat-wrap{ height:calc(100vh - 130px); } }
+.chat-log{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding:6px 4px 20px; }
+.msg{ max-width:78%; padding:12px 16px; border-radius:var(--radius-sm); font-size:14.5px; line-height:1.5; }
+.msg.user{ align-self:flex-end; background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+.msg.agent{ align-self:flex-start; background:var(--bg-card); border:1px solid var(--border); border-bottom-left-radius:4px; }
+.msg.agent .action-card{ margin-top:10px; background:var(--bg-2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:13px; }
+.msg.agent .action-card ul{ margin:8px 0; padding-left:0; }
+.msg.agent .action-card li{ padding:3px 0; color:var(--text-dim); }
+.chat-input-row{ display:flex; gap:10px; align-items:center; background:var(--bg-card); border:1px solid var(--border-strong); border-radius:999px; padding:6px 6px 6px 18px; }
+.chat-input-row input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-size:14px; padding:8px 0; }
+.chat-input-row input::placeholder{ color:var(--text-faint); }
+.send-btn{ width:38px; height:38px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+/* ============ SCREEN: SKILLS ============ */
+.skill-card{ display:flex; flex-direction:column; gap:10px; }
+.skill-icon{ width:38px; height:38px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; font-size:18px; }
+.skill-card h4{ font-size:14.5px; }
+.skill-card p{ font-size:12.5px; color:var(--text-dim); line-height:1.4; flex:1; }
+.skill-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+.stars{ color:var(--warn); font-size:11.5px; }
+.skill-card.suggested{ border-color:var(--accent); }
+.suggested-badge{ display:none; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; width:fit-content; }
+.skill-card.suggested .suggested-badge{ display:inline-block; }
+
+/* ============ SCREEN: AUTOMATIONS ============ */
+.autom-full-row{ display:flex; align-items:center; gap:14px; padding:14px 4px; border-bottom:1px solid var(--border); }
+.autom-full-row:last-child{ border-bottom:none; }
+.autom-icon{ width:36px; height:36px; border-radius:10px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.autom-info{ flex:1; }
+.autom-info .t{ font-weight:600; font-size:14px; }
+.autom-info .s{ font-size:12px; color:var(--text-faint); }
+
+/* ============ SCREEN: MEMORY ============ */
+.mem-item{ display:flex; gap:12px; padding:13px 0; border-bottom:1px solid var(--border); }
+.mem-item:last-child{ border:none; }
+.mem-tag{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; height:fit-content; flex-shrink:0; }
+.mem-item p{ font-size:13.5px; color:var(--text); line-height:1.5; }
+.mem-item .src{ font-size:11.5px; color:var(--text-faint); margin-top:3px; }
+
+/* ============ SCREEN: EXECUTION PROFILE ============ */
+.reason-row{ display:flex; align-items:center; gap:9px; font-size:13px; padding:2px 0; }
+.reason-row svg{ width:15px; height:15px; flex-shrink:0; }
+.reason-row.pass{ color:var(--text-dim); }
+.reason-row.pass svg{ color:var(--good); }
+.reason-row.warn{ color:var(--text); }
+.reason-row.warn svg{ color:var(--warn); }
+
+/* ============ SCREEN: DIAGNOSTICS ============ */
+.diag-row{ display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+.diag-row:last-child{ border-bottom:none; }
+.diag-row svg{ width:19px; height:19px; flex-shrink:0; margin-top:1px; }
+.diag-row.pass svg{ color:var(--good); }
+.diag-row.warn svg{ color:var(--warn); }
+.diag-row.fail svg{ color:var(--bad); }
+.diag-row .dr-t{ font-weight:600; font-size:13.5px; }
+.diag-row .dr-s{ font-size:12px; color:var(--text-faint); margin-top:2px; }
+
+/* ============ SCREEN: PERMISSIONS ============ */
+.perm-table{ width:100%; border-collapse:collapse; font-size:13px; }
+.perm-table th{ text-align:left; padding:10px 8px; color:var(--text-faint); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; border-bottom:1px solid var(--border-strong); }
+.perm-table td{ padding:12px 8px; border-bottom:1px solid var(--border); }
+.perm-table td:first-child{ font-weight:600; }
+.perm-cell{ width:36px; height:26px; border-radius:7px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; cursor:pointer; user-select:none; transition:.15s; }
+.perm-cell.ask{ background:var(--warn); color:#2a2000; }
+.perm-cell.suggest{ background:var(--accent-2); color:#fff; }
+.perm-cell.auto{ background:var(--good); color:#08150e; }
+.perm-cell.off{ background:var(--border); color:var(--text-faint); }
+.perm-legend{ display:flex; gap:16px; margin-top:16px; flex-wrap:wrap; font-size:12px; color:var(--text-dim); }
+.perm-legend span{ display:flex; align-items:center; gap:6px; }
+.nl-box{ display:flex; gap:10px; margin-top:20px; }
+.nl-box input{ flex:1; background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:11px 14px; outline:none; color:var(--text); font-size:13.5px; }
+
+/* ============ SCREEN: INTEGRATIONS ============ */
+.int-group{ margin-bottom:22px; }
+.int-group h4{ font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); margin-bottom:10px; }
+.int-item{ display:flex; align-items:center; gap:12px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; }
+.int-item .ii-icon{ width:32px; height:32px; border-radius:8px; background:var(--bg-2); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.int-item .ii-name{ font-weight:600; font-size:13.5px; flex:1; }
+.int-item .ii-status{ font-size:11.5px; color:var(--text-faint); }
+
+/* ============ SCREEN: SETTINGS ============ */
+.theme-gallery{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; }
+.theme-card{ border:2px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; cursor:pointer; transition:.15s; }
+.theme-card.selected{ border-color:var(--accent); }
+.theme-preview{ height:70px; display:flex; align-items:center; justify-content:center; font-size:22px; }
+.theme-label{ padding:9px 10px; font-size:12.5px; font-weight:600; background:var(--bg-card); }
+.theme-label small{ display:block; font-weight:400; color:var(--text-faint); font-size:10.5px; margin-top:1px; }
+.slider-row{ margin-bottom:20px; }
+.slider-row label{ font-size:13px; font-weight:600; display:block; margin-bottom:10px; }
+.seg{ display:flex; border:1px solid var(--border-strong); border-radius:999px; overflow:hidden; width:fit-content; }
+.seg button{ padding:8px 16px; font-size:12.5px; color:var(--text-dim); }
+.seg button.active{ background:var(--accent); color:#fff; }
+
+@media (max-width:720px){
+  .g-auto{ grid-template-columns:repeat(2,1fr); }
+  .opt-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SIDEBAR ============ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="brand"><i data-lucide="bot"></i></div>
+    <button class="drawer-close" id="drawer-close" aria-label="Close menu"><i data-lucide="x"></i></button>
+  </div>
+  <button class="nav-item active" data-screen="dashboard"><i data-lucide="home"></i><span class="nav-label">Dashboard</span><span class="tip">Dashboard</span></button>
+  <button class="nav-item" data-screen="onboarding"><i data-lucide="compass"></i><span class="nav-label">Setup</span><span class="tip">Setup</span></button>
+  <button class="nav-item" data-screen="profile"><i data-lucide="target"></i><span class="nav-label">Execution Profile</span><span class="tip">Execution Profile</span></button>
+  <button class="nav-item" data-screen="diagnostics"><i data-lucide="stethoscope"></i><span class="nav-label">Diagnostics</span><span class="tip">Diagnostics</span></button>
+  <button class="nav-item" data-screen="chat"><i data-lucide="message-circle"></i><span class="nav-label">Chat</span><span class="tip">Chat</span></button>
+  <button class="nav-item" data-screen="skills"><i data-lucide="sparkles"></i><span class="nav-label">Skills</span><span class="tip">Skills</span></button>
+  <button class="nav-item" data-screen="automations"><i data-lucide="zap"></i><span class="nav-label">Automations</span><span class="tip">Automations</span></button>
+  <button class="nav-item" data-screen="memory"><i data-lucide="brain"></i><span class="nav-label">Memory</span><span class="tip">Memory</span></button>
+  <button class="nav-item" data-screen="permissions"><i data-lucide="shield-check"></i><span class="nav-label">Permissions</span><span class="tip">Permissions</span></button>
+  <button class="nav-item" data-screen="integrations"><i data-lucide="plug"></i><span class="nav-label">Integrations</span><span class="tip">Integrations</span></button>
+  <div class="spacer"></div>
+  <button class="nav-item" data-screen="settings"><i data-lucide="settings"></i><span class="nav-label">Settings</span><span class="tip">Settings</span></button>
+</nav>
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+<!-- ============ MAIN ============ -->
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu"><i data-lucide="menu"></i></button>
+      <div class="screen-title">Your Agent <span style="opacity:.4">/</span> <b id="topbar-label">Dashboard</b></div>
+    </div>
+    <div class="theme-picker" id="theme-picker" title="Theme">
+      <span style="font-size:11.5px; color:var(--text-faint); margin-right:2px;">Theme</span>
+      <div class="swatch active" data-t="nova"></div>
+      <div class="swatch" data-t="bloom"></div>
+      <div class="swatch" data-t="halftone"></div>
+      <div class="swatch" data-t="terra"></div>
+      <div class="swatch" data-t="arcade"></div>
+      <div class="swatch" data-t="ink"></div>
+    </div>
+    <div style="position:relative;">
+      <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Change theme"><i data-lucide="palette"></i></button>
+      <div class="theme-sheet" id="theme-sheet">
+        <div class="swatch" data-t="nova"></div>
+        <div class="swatch" data-t="bloom"></div>
+        <div class="swatch" data-t="halftone"></div>
+        <div class="swatch" data-t="terra"></div>
+        <div class="swatch" data-t="arcade"></div>
+        <div class="swatch" data-t="ink"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ ONBOARDING ============ -->
+    <section class="screen" id="screen-onboarding">
+      <div class="wizard">
+        <div class="steps-track">
+          <div class="step-dot done" data-step="0"></div>
+          <div class="step-dot" data-step="1"></div>
+          <div class="step-dot" data-step="2"></div>
+          <div class="step-dot" data-step="3"></div>
+          <div class="step-dot" data-step="4"></div>
+          <div class="step-dot" data-step="5"></div>
+        </div>
+
+        <!-- step 0 -->
+        <div class="wiz-card wiz-step" data-step="0">
+          <h2>Welcome 👋</h2>
+          <p class="sub">I resolve the best runtime, model, and mode for each task from actual discovered evidence — never from guessing off a model's name. Let's scan your setup — it takes about two minutes.</p>
+          <div class="card" style="margin-top:auto;">
+            <div style="display:flex; gap:14px; align-items:center;">
+              <div class="focus-ring" style="width:52px;height:52px;"><span style="width:40px;height:40px;font-size:12px;">86%</span></div>
+              <div style="font-size:13px; color:var(--text-dim);">Most people are running a fully working setup within <b style="color:var(--text)">5 minutes</b> of opening this screen.</div>
+            </div>
+          </div>
+          <div class="wiz-nav"><span></span><button class="btn wiz-next">Start setup →</button></div>
+        </div>
+
+        <!-- step 1: detect -->
+        <div class="wiz-card wiz-step" data-step="1" style="display:none;">
+          <h2>Scanning your environment</h2>
+          <p class="sub">Discovering hardware, runtimes, and local models — this is the evidence everything else is resolved from.</p>
+          <div class="card">
+            <div class="detect-row"><span>GPU</span><span class="check-badge">✓ NVIDIA GTX 1080 Ti — 11.0 GB VRAM</span></div>
+            <div class="detect-row"><span>Memory</span><span class="check-badge">✓ 32 GB RAM</span></div>
+            <div class="detect-row"><span>Docker daemon</span><span class="check-badge">✓ Connected — v27.3.1</span></div>
+            <div class="detect-row"><span>Ollama</span><span class="check-badge">✓ Reachable at 127.0.0.1:11434 — 6 models</span></div>
+            <div class="detect-row"><span>Network</span><span class="check-badge">✓ Online</span></div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <div style="font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Structural candidate</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div><div style="font-weight:700; font-family:var(--font-display);">Agent Zero 2.8 + ollama/deepseek-r1:14b</div><div style="font-size:12.5px; color:var(--text-dim);">Fits your VRAM · capability evidence unverified</div></div>
+              <span class="pill" style="background:var(--warn); color:#2a2000;">Unverified</span>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 2: mode -->
+        <div class="wiz-card wiz-step" data-step="2" style="display:none;">
+          <h2>Operational mode</h2>
+          <p class="sub">This controls whether I'm allowed to consider cloud providers at all. You can change it anytime — nothing cloud-based runs until you explicitly enable a provider, even if a key is detected.</p>
+          <div class="opt-grid" style="grid-template-columns:1fr;">
+            <div class="opt-card selected" data-mode-option data-mode="local">
+              <div class="oc-title">🖥️ Local-only</div><div class="oc-sub">Only Ollama / local runtimes are ever considered. No data leaves this machine.</div>
+            </div>
+            <div class="opt-card" data-mode-option data-mode="cloud">
+              <div class="oc-title">☁️ Cloud-enabled</div><div class="oc-sub">Local is still preferred; cloud providers you explicitly enable can be used as fallback.</div>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 3: focus areas -->
+        <div class="wiz-card wiz-step" data-step="3" style="display:none;">
+          <h2>What do you want help with?</h2>
+          <p class="sub">Pick as many as you like — this shapes which skills I suggest first. You can change this anytime.</p>
+          <div class="opt-grid">
+            <div class="opt-card selected" data-toggle data-focus="work">
+              <div class="oc-title">💼 Work</div><div class="oc-sub">Email, docs, meetings</div>
+            </div>
+            <div class="opt-card selected" data-toggle data-focus="coding">
+              <div class="oc-title">💻 Coding</div><div class="oc-sub">Repos, reviews, debugging</div>
+            </div>
+            <div class="opt-card" data-toggle data-focus="research">
+              <div class="oc-title">🔍 Research</div><div class="oc-sub">Deep dives, summaries</div>
+            </div>
+            <div class="opt-card" data-toggle data-focus="files">
+              <div class="oc-title">📁 Files</div><div class="oc-sub">Organizing, cleanup</div>
+            </div>
+            <div class="opt-card selected" data-toggle data-focus="calendar">
+              <div class="oc-title">📅 Calendar</div><div class="oc-sub">Scheduling, reminders</div>
+            </div>
+            <div class="opt-card" data-toggle data-focus="automation">
+              <div class="oc-title">⚡ Automation</div><div class="oc-sub">Recurring workflows</div>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 4: connect (provider activation contract) -->
+        <div class="wiz-card wiz-step" data-step="4" style="display:none;">
+          <h2>Providers</h2>
+          <p class="sub">A detected API key never activates a provider on its own — you enable each one explicitly.</p>
+          <div style="max-height:270px; overflow-y:auto; padding-right:4px;">
+            <div class="provider-row">
+              <div class="tli-left">✉️ Google</div>
+              <span class="key-badge found">Key found</span>
+              <div class="switch on" data-switch data-integration="google"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">🐙 GitHub</div>
+              <span class="key-badge found">Key found</span>
+              <div class="switch on" data-switch data-integration="github"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">🌐 OpenRouter</div>
+              <span class="key-badge found">Key found</span>
+              <div class="switch" data-switch data-integration="openrouter"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">◆ Anthropic</div>
+              <span class="key-badge missing">No key detected</span>
+              <div class="switch" data-switch data-integration="anthropic" data-disabled="true"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">💬 Slack</div>
+              <span class="key-badge missing">No key detected</span>
+              <div class="switch" data-switch data-integration="slack" data-disabled="true"></div>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 5: personality + theme -->
+        <div class="wiz-card wiz-step" data-step="5" style="display:none;">
+          <h2>Make it yours</h2>
+          <p class="sub">Set how I communicate, and pick a look. Both are just a starting point — change either anytime in Settings.</p>
+          <div class="slider-row">
+            <label>How proactive should I be?</label>
+            <div class="seg">
+              <button>Only when asked</button><button class="active">Suggest actions</button><button>Manage things</button>
+            </div>
+          </div>
+          <div class="slider-row">
+            <label>Pick a theme</label>
+            <div class="theme-gallery" id="onboard-theme-gallery"></div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next" id="finish-setup">Finish setup ✓</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="screen active" id="screen-dashboard">
+      <div class="hero-greet">
+        <div>
+          <h1>Good morning <span style="color:var(--accent)">✦</span></h1>
+          <p>Your agent is ready to help you focus on what matters most today.</p>
+        </div>
+        <div style="text-align:right;">
+          <div class="focus-ring"><span>86%</span></div>
+          <div style="font-size:11px; color:var(--text-faint); margin-top:6px;">Focus score</div>
+        </div>
+      </div>
+
+      <div class="ask-box">
+        <span style="color:var(--text-faint)">✦</span>
+        <input placeholder="Ask anything, or tell me what you want done…">
+        <button class="btn sm">Ask</button>
+      </div>
+
+      <div class="suggest-row" id="suggest-row">
+        <div class="suggest-chip" data-focus="work">⚡ Check my tasks</div>
+        <div class="suggest-chip" data-focus="work">📧 Summarize today's email</div>
+        <div class="suggest-chip" data-focus="research">🔍 Research something</div>
+        <div class="suggest-chip" data-focus="coding">💻 Work on my project</div>
+      </div>
+
+      <div class="grid g3" style="margin-bottom:16px;">
+        <div class="card">
+          <h3>✉️ Email — Summary <span class="count">8 unread</span></h3>
+          <div class="email-row"><div class="avatar-dot"></div><div class="line"></div></div>
+          <div class="email-row"><div class="avatar-dot"></div><div class="line sm"></div></div>
+          <div class="email-row"><div class="avatar-dot"></div><div class="line"></div></div>
+          <div class="summary-banner">✦ 8 unread emails summarized — nothing urgent</div>
+        </div>
+        <div class="card">
+          <h3>📅 Calendar — Today</h3>
+          <div class="cal-row"><span style="width:36px;">9 AM</span><div class="bar filled" style="width:60%"></div></div>
+          <div class="cal-row"><span style="width:36px;">11 AM</span><div class="bar filled"></div></div>
+          <div class="cal-row"><span style="width:36px;">1 PM</span><div class="bar"></div></div>
+          <div class="cal-row"><span style="width:36px;">2 PM</span><div class="bar filled" style="width:80%"></div></div>
+          <div class="cal-row"><span style="width:36px;">4 PM</span><div class="bar filled" style="width:40%"></div></div>
+        </div>
+        <div class="card">
+          <h3>📄 Research Brief</h3>
+          <div style="height:76px; border-radius:10px; background:var(--grad),var(--bg-2); display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:10px;">📑</div>
+          <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6;">3 key findings on competitor pricing ready to review.</div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <h3>⚡ Automations — Active <span class="count">4 running</span></h3>
+          <div class="autom-row"><span>📬</span><div style="flex:1;"><div style="font-size:13.5px; font-weight:500;">Sort & summarize new emails</div><div style="font-size:11.5px; color:var(--text-faint);">Runs every 15 minutes</div></div><span class="pill on">Active</span></div>
+          <div class="autom-row"><span>📅</span><div style="flex:1;"><div style="font-size:13.5px; font-weight:500;">Schedule meetings & invites</div><div style="font-size:11.5px; color:var(--text-faint);">Weekdays, 9:00 AM</div></div><span class="pill on">Active</span></div>
+          <div class="autom-row"><span>📊</span><div style="flex:1;"><div style="font-size:13.5px; font-weight:500;">Compile daily research brief</div><div style="font-size:11.5px; color:var(--text-faint);">Every morning, 7:00 AM</div></div><span class="pill on">Active</span></div>
+        </div>
+        <div class="card">
+          <h3>🎯 Today's focus</h3>
+          <div class="check-row done"><div class="box">✓</div><span>Review Q2 project updates</span></div>
+          <div class="check-row done"><div class="box">✓</div><span>Client call</span></div>
+          <div class="check-row"><div class="box"></div><span>Prepare strategy deck</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3>⚙ Active execution profile <span class="count">resolved in 0.32s</span></h3>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+          <div style="display:flex; gap:22px; flex-wrap:wrap;">
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Runtime</div><div style="font-weight:600; font-size:14px;">Agent Zero 2.8</div></div>
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Model</div><div style="font-weight:600; font-size:14px; font-family:var(--font-mono);">ollama/deepseek-r1:14b</div></div>
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Mode</div><div style="font-weight:600; font-size:14px;">Local</div></div>
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Cost</div><div style="font-weight:600; font-size:14px;">$0.00 / 1M tok</div></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="pill" style="background:var(--warn); color:#2a2000;">Structural fit — unverified</span>
+            <button class="btn sm ghost" onclick="document.querySelector('.nav-item[data-screen=\'profile\']').click()">View reasoning →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EXECUTION PROFILE ============ -->
+    <section class="screen" id="screen-profile">
+      <h2 class="section-title">Execution profile resolver</h2>
+      <p class="section-sub">Describe a task. I'll resolve the best runtime + model + mode from actual discovered evidence — never from model-name guessing.</p>
+      <div class="nl-box" style="margin-bottom:20px;">
+        <input id="profile-task-input" placeholder="e.g. write a python script to scrape a website" value="write a python script to scrape a website">
+        <button class="btn sm" id="profile-resolve-btn">Resolve</button>
+      </div>
+
+      <div class="card" id="profile-result">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em;">Recommended configuration</div>
+            <div class="display" style="font-size:19px; margin-top:2px;">Agent Zero 2.8 <span style="color:var(--text-faint); font-weight:400; font-size:14px;">+</span> <span style="font-family:var(--font-mono); font-size:16px;">ollama/deepseek-r1:14b</span></div>
+          </div>
+          <span class="pill" style="background:var(--warn); color:#2a2000;">Best structural candidate — capability unverified</span>
+        </div>
+
+        <div class="grid g3" style="margin-bottom:18px;">
+          <div class="card" style="box-shadow:none; padding:14px;"><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase;">Mode</div><div style="font-weight:600; margin-top:4px;">Local</div></div>
+          <div class="card" style="box-shadow:none; padding:14px;"><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase;">Capability confidence</div><div style="font-weight:600; margin-top:4px; color:var(--warn);">UNKNOWN (0% empirical)</div></div>
+          <div class="card" style="box-shadow:none; padding:14px;"><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase;">Estimated cost</div><div style="font-weight:600; margin-top:4px;">$0.00 / 1M tokens</div></div>
+        </div>
+
+        <div style="font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:8px;">Why</div>
+        <div style="display:flex; flex-direction:column; gap:7px; margin-bottom:18px;">
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Structural fit score: 0.59</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Browser → agent_zero runtime</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Code execution → agent_zero runtime</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Filesystem → agent_zero runtime</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Coding task → model capability unverified</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Structural fit → ollama/deepseek-r1:14b</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Hardware → NVIDIA GeForce GTX 1080 Ti (11.0 GB VRAM available)</span></div>
+          <div class="reason-row warn"><i data-lucide="alert-triangle"></i><span>Capability evidence → UNKNOWN (0%)</span></div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+          <div style="font-size:13px; color:var(--text-dim);">Alternative: <span style="font-family:var(--font-mono); color:var(--text);">ollama/qwen3.5:4b</span> (Local)</div>
+          <div style="font-size:11.5px; color:var(--text-faint);">Resolved in 0.32s</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DIAGNOSTICS ============ -->
+    <section class="screen" id="screen-diagnostics">
+      <h2 class="section-title">Diagnostics</h2>
+      <p class="section-sub">Health checks and discovered inventory — the evidence the resolver reasons from.</p>
+
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:6px;">Health checks</h3>
+        <div class="diag-row pass"><i data-lucide="check-circle-2"></i><div class="dr-body"><div class="dr-t">Docker daemon</div><div class="dr-s">Connected — v27.3.1, 3 containers running</div></div></div>
+        <div class="diag-row pass"><i data-lucide="check-circle-2"></i><div class="dr-body"><div class="dr-t">Environment configuration</div><div class="dr-s">.env loaded, all required keys present</div></div></div>
+        <div class="diag-row pass"><i data-lucide="check-circle-2"></i><div class="dr-body"><div class="dr-t">Local model readiness</div><div class="dr-s">Ollama reachable at 127.0.0.1:11434 — 6 models available</div></div></div>
+        <div class="diag-row warn"><i data-lucide="alert-triangle"></i><div class="dr-body"><div class="dr-t">Cloud API endpoints</div><div class="dr-s">OpenRouter key detected but provider not enabled — see Integrations</div></div></div>
+        <div class="diag-row fail"><i data-lucide="x-circle"></i><div class="dr-body"><div class="dr-t">GPU driver version</div><div class="dr-s">nvidia-smi reports a driver update is available</div></div></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:6px;">Discovered inventory</h3>
+        <div class="detect-row"><span>Hardware</span><span class="check-badge">✓ NVIDIA GTX 1080 Ti — 11.0 GB VRAM · 32 GB RAM</span></div>
+        <div class="detect-row"><span>Runtimes</span><span class="check-badge">✓ Agent Zero 2.8 (Docker)</span></div>
+        <div class="detect-row"><span>Local models (Ollama)</span><span class="check-badge">✓ 6 found</span></div>
+        <div class="detect-row"><span>Cloud providers — keys found</span><span class="check-badge" style="color:var(--warn);">⚠ 2 found, 1 enabled</span></div>
+      </div>
+    </section>
+
+    <!-- ============ CHAT ============ -->
+    <section class="screen" id="screen-chat">
+      <div class="chat-wrap">
+        <div class="chat-log" id="chat-log">
+          <div class="msg agent">Hey — I noticed 43 files piled up in Downloads. Want me to sort them?</div>
+          <div class="msg user">yeah go ahead, but check with me before deleting anything</div>
+          <div class="msg agent">
+            Got it — I'll always ask first for deletions. Here's what I found:
+            <div class="action-card">
+              <ul>
+                <li>📄 18 PDFs → move to Documents</li>
+                <li>🖼️ 22 images → move to Pictures</li>
+                <li>⚠️ 3 exact duplicates → flagged for your review</li>
+              </ul>
+            </div>
+          </div>
+          <div class="msg user">do it</div>
+          <div class="msg agent">Done ✓ Moved 40 files. The 3 duplicates are waiting in a review folder whenever you get a chance to look.</div>
+        </div>
+        <div class="chat-input-row">
+          <input id="chat-input" placeholder="Ask anything or tell me what you want done…">
+          <button class="send-btn" id="chat-send"><i data-lucide="send" style="width:16px;height:16px;"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKILLS ============ -->
+    <section class="screen" id="screen-skills">
+      <h2 class="section-title">Skills marketplace</h2>
+      <p class="section-sub">Install a skill and I'll gain the capability instantly — permissions are set automatically from your policy.</p>
+      <div class="grid g-auto" id="skills-grid">
+        <!-- injected by JS -->
+      </div>
+    </section>
+
+    <!-- ============ AUTOMATIONS ============ -->
+    <section class="screen" id="screen-automations">
+      <h2 class="section-title">Automations</h2>
+      <p class="section-sub">Recurring workflows I run on your behalf. Toggle any of them off, or teach me a new one below.</p>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="autom-full-row"><div class="autom-icon">📬</div><div class="autom-info"><div class="t">Sort & summarize new emails</div><div class="s">Runs every 15 minutes · Read + label only</div></div><div class="switch on" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">📅</div><div class="autom-info"><div class="t">Schedule meetings & send invites</div><div class="s">Weekdays, 9:00 AM · Asks before sending</div></div><div class="switch on" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">📊</div><div class="autom-info"><div class="t">Research & compile daily brief</div><div class="s">Every morning, 7:00 AM</div></div><div class="switch on" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">✅</div><div class="autom-info"><div class="t">Follow up on action items</div><div class="s">Every day, 5:00 PM</div></div><div class="switch" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">💰</div><div class="autom-info"><div class="t">Price monitor — 3 tracked sites</div><div class="s">Weekly, Fridays · Notifies only</div></div><div class="switch on" data-switch></div></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">💬 Teach me a new one</h3>
+        <p style="font-size:13px; color:var(--text-dim); margin-bottom:14px;">Describe a workflow in plain language and I'll turn it into a recurring automation.</p>
+        <div class="nl-box"><input placeholder="e.g. Every Friday, check these 3 sites and tell me if prices changed"><button class="btn sm">Create</button></div>
+      </div>
+    </section>
+
+    <!-- ============ MEMORY ============ -->
+    <section class="screen" id="screen-memory">
+      <h2 class="section-title">Memory</h2>
+      <p class="section-sub">What I've learned about how you work. Nothing here changes risky behavior without asking you first.</p>
+      <div class="card">
+        <div class="mem-item"><span class="mem-tag">Style</span><div><p>Prefers concise answers with links to sources rather than long explanations.</p><div class="src">Learned from 14 conversations</div></div></div>
+        <div class="mem-item"><span class="mem-tag">Tools</span><div><p>Uses local models for anything touching private files; cloud models for harder reasoning tasks.</p><div class="src">Learned from usage patterns</div></div></div>
+        <div class="mem-item"><span class="mem-tag">People</span><div><p>"The team" usually refers to Sana, Malik, and Ayesha on the design side.</p><div class="src">Learned from calendar + email</div></div></div>
+        <div class="mem-item"><span class="mem-tag">Policy</span><div><p>Always confirm before sending external emails, even routine ones.</p><div class="src">Set explicitly by you on Aug 3</div></div></div>
+        <div class="mem-item"><span class="mem-tag">Projects</span><div><p>"The Oracle box" refers to the always-on home server used for automations.</p><div class="src">Learned from 6 conversations</div></div></div>
+      </div>
+    </section>
+
+    <!-- ============ PERMISSIONS ============ -->
+    <section class="screen" id="screen-permissions">
+      <h2 class="section-title">Autonomy & permissions</h2>
+      <p class="section-sub">Click any cell to cycle its permission level. This is the one place that controls what I'm allowed to do without asking.</p>
+      <div class="card">
+        <table class="perm-table">
+          <thead><tr><th>Capability</th><th>Level</th></tr></thead>
+          <tbody id="perm-body">
+            <tr><td>Read files</td><td><span class="perm-cell auto" data-cycle>AUTO</span></td></tr>
+            <tr><td>Write files</td><td><span class="perm-cell suggest" data-cycle>SUG</span></td></tr>
+            <tr><td>Run shell commands</td><td><span class="perm-cell ask" data-cycle>ASK</span></td></tr>
+            <tr><td>Send email</td><td><span class="perm-cell ask" data-cycle>ASK</span></td></tr>
+            <tr><td>Delete files</td><td><span class="perm-cell off" data-cycle>OFF</span></td></tr>
+            <tr><td>Make a purchase</td><td><span class="perm-cell off" data-cycle>OFF</span></td></tr>
+            <tr><td>Deploy code</td><td><span class="perm-cell ask" data-cycle>ASK</span></td></tr>
+          </tbody>
+        </table>
+        <div class="perm-legend">
+          <span><div class="dot" style="color:var(--good)"></div>AUTO — does it without asking</span>
+          <span><div class="dot" style="color:var(--accent-2)"></div>SUGGEST — proposes it first</span>
+          <span><div class="dot" style="color:var(--warn)"></div>ASK — always confirms</span>
+          <span><div class="dot" style="color:var(--text-faint)"></div>OFF — never does this</span>
+        </div>
+        <div class="nl-box"><input placeholder="e.g. You can automatically organize my Downloads folder"><button class="btn sm">Set policy</button></div>
+      </div>
+    </section>
+
+    <!-- ============ INTEGRATIONS ============ -->
+    <section class="screen" id="screen-integrations">
+      <h2 class="section-title">Integrations</h2>
+      <p class="section-sub">Connect the services I should work with. Everything is optional and can be revoked anytime.</p>
+      <div class="grid g2">
+        <div>
+          <div class="int-group">
+            <h4>AI models</h4>
+            <div class="int-item"><div class="ii-icon">🖥️</div><div class="ii-name">Local models</div><span class="pill on">Connected</span></div>
+            <div class="int-item"><div class="ii-icon">◆</div><div class="ii-name">Anthropic</div><span class="pill on">Connected</span></div>
+            <div class="int-item"><div class="ii-icon">🌐</div><div class="ii-name">OpenRouter</div><button class="btn sm ghost">Connect</button></div>
+          </div>
+          <div class="int-group">
+            <h4>Work</h4>
+            <div class="int-item" data-int="google"><div class="ii-icon">✉️</div><div class="ii-name">Google</div><span class="pill on">Connected</span></div>
+            <div class="int-item" data-int="microsoft"><div class="ii-icon">🪟</div><div class="ii-name">Microsoft</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item" data-int="github"><div class="ii-icon">🐙</div><div class="ii-name">GitHub</div><span class="pill on">Connected</span></div>
+            <div class="int-item" data-int="slack"><div class="ii-icon">💬</div><div class="ii-name">Slack</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item" data-int="notion"><div class="ii-icon">📓</div><div class="ii-name">Notion</div><button class="btn sm ghost">Connect</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="int-group">
+            <h4>Automation</h4>
+            <div class="int-item"><div class="ii-icon">🔗</div><div class="ii-name">n8n</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item"><div class="ii-icon">⚡</div><div class="ii-name">Zapier</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item"><div class="ii-icon">🏠</div><div class="ii-name">Home Assistant</div><button class="btn sm ghost">Connect</button></div>
+          </div>
+          <div class="int-group">
+            <h4>Always-on node</h4>
+            <div class="int-item"><div class="ii-icon">☁️</div><div class="ii-name">Oracle A1Flex server</div><span class="pill on">Online</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="screen" id="screen-settings">
+      <h2 class="section-title">Settings</h2>
+      <p class="section-sub">Make the agent look and behave like yours. Any user can build their own theme — this is a starter set.</p>
+
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:14px;">Appearance</h3>
+        <div class="theme-gallery" id="settings-theme-gallery"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:14px;">Response style</h3>
+        <div class="slider-row" style="margin-bottom:0;">
+          <div class="seg"><button>Concise</button><button class="active">Balanced</button><button>Detailed</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Proactivity</h3>
+        <div class="seg"><button>Only when asked</button><button class="active">Suggest actions</button><button>Manage things</button></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+lucide.createIcons();
+
+// ---------- THEME DATA ----------
+const THEME_COLORS = { nova:'#0b0c14', bloom:'#fdf3f6', halftone:'#fff6e0', terra:'#f4f1e8', arcade:'#07060f', ink:'#fafafa' };
+const THEMES = [
+  { id:'nova', name:'Nova', sub:'Professional', icon:'◆', bg:'linear-gradient(135deg,#8b7cf6,#0b0c14)' },
+  { id:'bloom', name:'Bloom', sub:'Fashion / soft', icon:'✿', bg:'linear-gradient(135deg,#e8628f,#fdf3f6)' },
+  { id:'halftone', name:'Halftone', sub:'Comic / pop-art', icon:'★', bg:'linear-gradient(135deg,#ff3d5a,#ffe9a8)' },
+  { id:'terra', name:'Terra', sub:'Nature / calm', icon:'❦', bg:'linear-gradient(135deg,#5c7a4f,#f4f1e8)' },
+  { id:'arcade', name:'Arcade', sub:'Neon / gaming', icon:'▲', bg:'linear-gradient(135deg,#00f0ff,#07060f)' },
+  { id:'ink', name:'Ink', sub:'Manga / anime', icon:'✺', bg:'linear-gradient(135deg,#e6002e,#ffffff)' },
+];
+
+function setTheme(id){
+  document.documentElement.setAttribute('data-theme', id);
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active', s.dataset.t===id));
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('selected', c.dataset.t===id));
+  const meta = document.getElementById('theme-color-meta');
+  if(meta && THEME_COLORS[id]) meta.setAttribute('content', THEME_COLORS[id]);
+  document.getElementById('theme-sheet')?.classList.remove('open');
+}
+
+document.querySelectorAll('.swatch').forEach(s=>{
+  s.addEventListener('click', ()=> setTheme(s.dataset.t));
+});
+
+function buildThemeGallery(containerId){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = THEMES.map(t=>`
+    <div class="theme-card" data-t="${t.id}">
+      <div class="theme-preview" style="background:${t.bg}; color:#fff;">${t.icon}</div>
+      <div class="theme-label">${t.name}<small>${t.sub}</small></div>
+    </div>`).join('');
+  el.querySelectorAll('.theme-card').forEach(c=>{
+    c.addEventListener('click', ()=> setTheme(c.dataset.t));
+  });
+}
+buildThemeGallery('onboard-theme-gallery');
+buildThemeGallery('settings-theme-gallery');
+setTheme('nova');
+
+// ---------- NAV ----------
+const screenLabels = {
+  onboarding:'Setup', dashboard:'Dashboard', chat:'Chat', skills:'Skills',
+  automations:'Automations', memory:'Memory', permissions:'Permissions',
+  integrations:'Integrations', settings:'Settings', profile:'Execution Profile',
+  diagnostics:'Diagnostics'
+};
+document.querySelectorAll('.nav-item[data-screen]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const target = btn.dataset.screen;
+    document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-'+target).classList.add('active');
+    document.getElementById('topbar-label').textContent = screenLabels[target];
+    document.querySelector('.content').scrollTop = 0;
+    closeDrawer();
+  });
+});
+
+// ---------- MOBILE DRAWER (hamburger nav) ----------
+const sidebarEl = document.getElementById('sidebar');
+const backdropEl = document.getElementById('drawer-backdrop');
+function openDrawer(){ sidebarEl.classList.add('open'); backdropEl.classList.add('open'); }
+function closeDrawer(){ sidebarEl.classList.remove('open'); backdropEl.classList.remove('open'); }
+document.getElementById('hamburger-btn').addEventListener('click', openDrawer);
+document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+backdropEl.addEventListener('click', closeDrawer);
+
+// ---------- MOBILE THEME SHEET ----------
+const themeToggleBtn = document.getElementById('theme-toggle-btn');
+const themeSheet = document.getElementById('theme-sheet');
+themeToggleBtn.addEventListener('click', (e)=>{ e.stopPropagation(); themeSheet.classList.toggle('open'); });
+document.addEventListener('click', (e)=>{
+  if(!themeSheet.contains(e.target) && e.target!==themeToggleBtn) themeSheet.classList.remove('open');
+});
+
+// ---------- APP STATE (in-memory, drives personalization) ----------
+const appState = {
+  focusAreas: new Set(['work','coding','calendar']),
+  integrations: new Set(['google','github']),
+  proactivity: 'Suggest actions',
+};
+
+// ---------- ONBOARDING WIZARD ----------
+let currentStep = 0;
+const totalSteps = 5;
+function showStep(n){
+  document.querySelectorAll('.wiz-step').forEach(s=>{
+    s.style.display = (parseInt(s.dataset.step)===n) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.step-dot').forEach(d=>{
+    d.classList.toggle('done', parseInt(d.dataset.step) <= n);
+  });
+  currentStep = n;
+}
+document.querySelectorAll('.wiz-next').forEach(b=>b.addEventListener('click', ()=>{
+  if(currentStep < totalSteps-1) showStep(currentStep+1);
+  else { applyPersonalization(); navigateTo('dashboard'); }
+}));
+document.querySelectorAll('.wiz-back').forEach(b=>b.addEventListener('click', ()=>{
+  if(currentStep > 0) showStep(currentStep-1);
+}));
+function navigateTo(screen){
+  document.querySelector(`.nav-item[data-screen="${screen}"]`).click();
+}
+
+// opt-card multi-select toggles (focus areas)
+document.querySelectorAll('.opt-card[data-toggle]').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    c.classList.toggle('selected');
+    const focus = c.dataset.focus;
+    if(!focus) return;
+    if(c.classList.contains('selected')) appState.focusAreas.add(focus);
+    else appState.focusAreas.delete(focus);
+  });
+});
+
+// switches (generic on/off; onboarding integration switches also update state)
+document.querySelectorAll('.switch[data-switch]').forEach(s=>{
+  s.addEventListener('click', ()=>{
+    s.classList.toggle('on');
+    const integ = s.dataset.integration;
+    if(!integ) return;
+    if(s.classList.contains('on')) appState.integrations.add(integ);
+    else appState.integrations.delete(integ);
+  });
+});
+
+// segmented controls (the proactivity control in onboarding also updates state)
+document.querySelectorAll('.seg').forEach(seg=>{
+  seg.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      seg.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      if(seg.closest('.wiz-step')) appState.proactivity = btn.textContent;
+    });
+  });
+});
+
+// ---------- APPLY PERSONALIZATION (runs once onboarding finishes) ----------
+function applyPersonalization(){
+  // Dashboard suggestion chips: highlight the ones matching chosen focus areas
+  document.querySelectorAll('#suggest-row .suggest-chip').forEach(chip=>{
+    chip.classList.toggle('chip-match', appState.focusAreas.has(chip.dataset.focus));
+  });
+
+  // Skills marketplace: badge + float matching skills to the top
+  const grid = document.getElementById('skills-grid');
+  const cards = Array.from(grid.querySelectorAll('.skill-card'));
+  cards.forEach(card=>{
+    card.classList.toggle('suggested', appState.focusAreas.has(card.dataset.focus));
+  });
+  cards.sort((a,b)=> (b.classList.contains('suggested')?1:0) - (a.classList.contains('suggested')?1:0));
+  cards.forEach(c=> grid.appendChild(c));
+
+  // Integrations screen: mirror what was connected during setup
+  document.querySelectorAll('.int-item[data-int]').forEach(item=>{
+    const connected = appState.integrations.has(item.dataset.int);
+    const statusSlot = item.querySelector('.pill, .btn');
+    if(!statusSlot) return;
+    if(connected){
+      const pill = document.createElement('span');
+      pill.className = 'pill on';
+      pill.textContent = 'Connected';
+      statusSlot.replaceWith(pill);
+    }
+  });
+
+  // Settings: mirror chosen proactivity level
+  const settingsProactivitySeg = document.querySelectorAll('#screen-settings .seg')[1];
+  if(settingsProactivitySeg){
+    settingsProactivitySeg.querySelectorAll('button').forEach(b=>{
+      b.classList.toggle('active', b.textContent === appState.proactivity);
+    });
+  }
+}
+
+// ---------- PERMISSIONS CYCLING ----------
+const permLevels = ['ask','suggest','auto','off'];
+const permLabel = { ask:'ASK', suggest:'SUG', auto:'AUTO', off:'OFF' };
+document.querySelectorAll('.perm-cell[data-cycle]').forEach(cell=>{
+  cell.addEventListener('click', ()=>{
+    let cur = permLevels.find(l=>cell.classList.contains(l));
+    let idx = (permLevels.indexOf(cur)+1) % permLevels.length;
+    permLevels.forEach(l=>cell.classList.remove(l));
+    cell.classList.add(permLevels[idx]);
+    cell.textContent = permLabel[permLevels[idx]];
+  });
+});
+
+// ---------- SKILLS GRID ----------
+const SKILLS = [
+  {icon:'🔍', name:'Deep Research', desc:'Multi-step web research with cited summaries.', installed:true, focus:'research'},
+  {icon:'📁', name:'File Organizer', desc:'Sorts, renames and dedupes local files.', installed:true, focus:'files'},
+  {icon:'💻', name:'Coding Assistant', desc:'Reads repos, opens PRs, runs tests.', installed:false, focus:'coding'},
+  {icon:'📧', name:'Email Assistant', desc:'Drafts, summarizes, and triages inbox.', installed:true, focus:'work'},
+  {icon:'📅', name:'Calendar Manager', desc:'Books meetings, resolves conflicts.', installed:false, focus:'calendar'},
+  {icon:'📊', name:'Excel Analyst', desc:'Cleans data and builds pivot summaries.', installed:false, focus:'work'},
+  {icon:'🧾', name:'Invoice Processor', desc:'Extracts line items from PDFs.', installed:false, focus:'files'},
+  {icon:'🌐', name:'Website Monitor', desc:'Watches pages for price or content changes.', installed:true, focus:'automation'},
+  {icon:'📝', name:'Meeting Summarizer', desc:'Turns transcripts into action items.', installed:false, focus:'calendar'},
+];
+document.getElementById('skills-grid').innerHTML = SKILLS.map((s,i)=>`
+  <div class="card skill-card" data-focus="${s.focus}">
+    <div class="skill-icon">${s.icon}</div>
+    <span class="suggested-badge">Suggested for you</span>
+    <h4>${s.name}</h4>
+    <p>${s.desc}</p>
+    <div class="skill-foot">
+      <span class="stars">★★★★☆</span>
+      <button class="btn sm ${s.installed?'ghost':''}" data-install="${i}">${s.installed?'Installed ✓':'Install'}</button>
+    </div>
+  </div>`).join('');
+document.querySelectorAll('[data-install]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const installed = btn.textContent.includes('Installed');
+    btn.textContent = installed ? 'Install' : 'Installed ✓';
+    btn.classList.toggle('ghost');
+  });
+});
+
+// ---------- CHAT ----------
+const chatLog = document.getElementById('chat-log');
+const chatInput = document.getElementById('chat-input');
+function sendChat(){
+  const val = chatInput.value.trim();
+  if(!val) return;
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg user';
+  userMsg.textContent = val;
+  chatLog.appendChild(userMsg);
+  chatInput.value = '';
+  chatLog.scrollTop = chatLog.scrollHeight;
+  setTimeout(()=>{
+    const agentMsg = document.createElement('div');
+    agentMsg.className = 'msg agent';
+    agentMsg.textContent = "Got it — I'll take care of that and check with you before anything irreversible.";
+    chatLog.appendChild(agentMsg);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }, 500);
+}
+document.getElementById('chat-send').addEventListener('click', sendChat);
+chatInput.addEventListener('keydown', e=>{ if(e.key==='Enter') sendChat(); });
+</script>
+</body>
+</html>
