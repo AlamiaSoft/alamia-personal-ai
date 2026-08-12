@@ -39,13 +39,19 @@ def main():
         sys.exit(1)
         
     top_profile = profiles[0]
+    is_verified = top_profile.model.evidence.confidence > 0.40
     
     print("Recommended configuration\n")
     print(f"Runtime\n  {top_profile.runtime_id.capitalize()} 2.8\n")
     print(f"Model\n  {top_profile.model.id}\n")
     print(f"Mode\n  {top_profile.model.provider.type.capitalize()}\n")
     
-    print("\nWhy?")
+    if is_verified:
+        print("Suitability Status\n  Empirically Verified Capable Candidate\n")
+    else:
+        print("Suitability Status\n  Best structural candidate -- capability unverified\n")
+    
+    print("Why?")
     rec_explain = explainability.get(top_profile.model.id, [])
     for reason in rec_explain:
         if "[WARN]" in reason:
@@ -58,7 +64,11 @@ def main():
         alt_profile = profiles[1]
         print(f"Alternative\n  {alt_profile.model.id} ({alt_profile.model.provider.type.capitalize()})\n")
     
-    print(f"Confidence\n  {top_profile.reliability_score * 100:.0f}%\n")
+    if is_verified:
+        print(f"Capability Confidence\n  {top_profile.reliability_score * 100:.0f}%\n")
+    else:
+        print("Capability Confidence\n  UNKNOWN (0% empirical evidence - structural ranking applied)\n")
+        
     print(f"Estimated cost\n  ${top_profile.model.economics.cost_per_1m_input} / 1M tokens\n")
     print(f"Resolved in {elapsed:.2f}s")
 

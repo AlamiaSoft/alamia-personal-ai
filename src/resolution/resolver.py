@@ -170,7 +170,8 @@ class ExecutionProfileResolver:
             key=lambda x: (
                 round(x[0], 4), 
                 x[1].model.context.window or 0, 
-                x[1].model.hardware.vram_required_gb or 0.0
+                x[1].model.hardware.vram_required_gb or 0.0,
+                x[1].model.id
             ), 
             reverse=True
         )

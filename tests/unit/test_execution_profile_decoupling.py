@@ -179,5 +179,81 @@ class TestExecutionProfileDecoupling(unittest.TestCase):
         self.assertEqual(profiles_a[0].model.id, "ollama/large:14b", "Objective structural fit (131k context, 10GB VRAM) must win regardless of initial list order")
         self.assertEqual(profiles_b[0].model.id, "ollama/large:14b", "Objective structural fit (131k context, 10GB VRAM) must win regardless of initial list order")
 
+    def test_7_structural_ranking_cannot_manufacture_capability_claims(self):
+        """Structural ranking must not manufacture capability claims or alter confidence values."""
+        resolver = ExecutionProfileResolver()
+        reqs = TaskRequirements(code_execution=True)
+        profiles, _ = resolver.resolve(self.inventory, reqs, [])
+        model = profiles[0].model
+        self.assertEqual(model.capabilities.coding, 0.0)
+        self.assertEqual(model.evidence.confidence, 0.0)
+        self.assertFalse(model.evidence.tested)
+
+    def test_8_verified_coding_model_outranks_unverified_structural_candidate(self):
+        """An empirically verified coding model must outrank an unverified candidate with large structural context/VRAM."""
+        unverified_large = ModelProfile(
+            id="ollama/unverified:70b",
+            provider=ProviderInfo(id="ollama", type="local"),
+            hardware=HardwareRequirements(vram_required_gb=15.0),
+            capabilities=Capabilities(),
+            context=Context(window=262144),
+            economics=Economics(),
+            limits=Limits(),
+            evidence=Evidence(source="runtime_metadata", tested=False, confidence=0.0)
+        )
+        verified_small = ModelProfile(
+            id="ollama/verified:7b",
+            provider=ProviderInfo(id="ollama", type="local"),
+            hardware=HardwareRequirements(vram_required_gb=5.0),
+            capabilities=Capabilities(coding=0.95, reasoning=0.90, tool_calling=0.90),
+            context=Context(window=32768),
+            economics=Economics(),
+            limits=Limits(),
+            evidence=Evidence(source="empirical", tested=True, confidence=0.90)
+        )
+        inv = HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[unverified_large, verified_small])
+        resolver = ExecutionProfileResolver()
+        reqs = TaskRequirements(code_execution=True)
+        
+        profiles, _ = resolver.resolve(inv, reqs, [])
+        self.assertEqual(profiles[0].model.id, "ollama/verified:7b", "Empirically verified candidate must outrank unverified structural candidate")
+
+    def test_9_unknown_capability_remains_unknown(self):
+        """UNKNOWN capability must remain confidence = 0.0 and coding = 0.0."""
+        resolver = ExecutionProfileResolver()
+        reqs = TaskRequirements(code_execution=True)
+        profiles, _ = resolver.resolve(self.inventory, reqs, [])
+        self.assertEqual(profiles[0].model.evidence.confidence, 0.0)
+
+    def test_10_inventory_order_cannot_affect_result_multiple_candidates(self):
+        """Inventory ordering cannot affect results across 3 candidate permutations."""
+        m1 = ModelProfile(id="m1", provider=ProviderInfo(id="mock", type="local"), hardware=HardwareRequirements(vram_required_gb=2.0), context=Context(window=8192), capabilities=Capabilities(), economics=Economics(), limits=Limits(), evidence=Evidence(confidence=0.0))
+        m2 = ModelProfile(id="m2", provider=ProviderInfo(id="mock", type="local"), hardware=HardwareRequirements(vram_required_gb=8.0), context=Context(window=32768), capabilities=Capabilities(), economics=Economics(), limits=Limits(), evidence=Evidence(confidence=0.0))
+        m3 = ModelProfile(id="m3", provider=ProviderInfo(id="mock", type="local"), hardware=HardwareRequirements(vram_required_gb=12.0), context=Context(window=131072), capabilities=Capabilities(), economics=Economics(), limits=Limits(), evidence=Evidence(confidence=0.0))
+        
+        resolver = ExecutionProfileResolver()
+        reqs = TaskRequirements(code_execution=True)
+        
+        res1, _ = resolver.resolve(HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[m1, m2, m3]), reqs, [])
+        res2, _ = resolver.resolve(HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[m3, m1, m2]), reqs, [])
+        res3, _ = resolver.resolve(HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[m2, m3, m1]), reqs, [])
+        
+        self.assertEqual(res1[0].model.id, "m3")
+        self.assertEqual(res2[0].model.id, "m3")
+        self.assertEqual(res3[0].model.id, "m3")
+
+    def test_11_ties_are_deterministic_without_relying_on_discovery_order(self):
+        """Tied structural candidates must rank deterministically regardless of discovery array order."""
+        mA = ModelProfile(id="model_A", provider=ProviderInfo(id="mock", type="local"), hardware=HardwareRequirements(vram_required_gb=4.0), context=Context(window=32768), capabilities=Capabilities(), economics=Economics(), limits=Limits(), evidence=Evidence(confidence=0.0))
+        mB = ModelProfile(id="model_B", provider=ProviderInfo(id="mock", type="local"), hardware=HardwareRequirements(vram_required_gb=4.0), context=Context(window=32768), capabilities=Capabilities(), economics=Economics(), limits=Limits(), evidence=Evidence(confidence=0.0))
+        
+        resolver = ExecutionProfileResolver()
+        reqs = TaskRequirements(code_execution=True)
+        
+        res1, _ = resolver.resolve(HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[mA, mB]), reqs, [])
+        res2, _ = resolver.resolve(HostInventory(hardware=self.hw, os_environment={"docker_running": True}, models=[mB, mA]), reqs, [])
+        
+        self.assertEqual(res1[0].model.id, res2[0].model.id)
+
 if __name__ == "__main__":
     unittest.main()
