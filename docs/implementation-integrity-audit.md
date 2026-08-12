@@ -9,11 +9,11 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
 
 | Metric | Count |
 | :--- | ---: |
-| **Total Audit Findings** | **8** |
-| **Placeholders Identified** | **5** |
-| **Incomplete Implementations** | **2** |
-| **False / Overstated Claims Corrected** | **3** |
-| **Fixes Performed** | **8** |
+| **Total Audit Findings** | **9** |
+| **Placeholders Identified** | **6** |
+| **Incomplete Implementations** | **3** |
+| **False / Overstated Claims Corrected** | **4** |
+| **Fixes Performed** | **9** |
 | **Remaining Intentional Stubs** | **1** (Unit test mock adapter) |
 
 ---
@@ -32,9 +32,7 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
 
 ### Finding 3: `src/discovery/model_scanner.py` (Mock Cloud & Ollama Heuristics)
 - **Status Before Audit**: `scan_cloud()` returned an empty list `[]`. `scan_ollama()` used naive string matching.
-- **Fix Performed**:
-  - `scan_cloud()` inspects `.env` and environment variables for `GROQ_API_KEY`, `OPENAI_API_KEY`, and `ANTHROPIC_API_KEY`, populating real `ModelProfile` instances with accurate context windows, pricing, and limits.
-  - `scan_ollama()` inspects model parameter sizes (`70b`, `32b`, `14b`, `8b`) and details from the local Ollama API to dynamically assign VRAM/RAM requirements and capability confidence.
+- **Fix Performed**: Rebuilt model scanner into a modular Provider Adapter architecture (`src/discovery/providers/`).
 
 ### Finding 4: `src/adapters/agent_zero/api_bridge.py` (Simulated Success Fallback)
 - **Status Before Audit**: In the `except` block, connection failures silently returned `ExecuteResult(success=True, response="Mock Bridge Response...")`.
@@ -59,33 +57,48 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
   - Replaced unicode characters with ASCII-safe strings (`[PASS]`, `[WARN]`, `[OK]`, `->`).
   - Added `tests/e2e/test_cli_entrypoints.py` which executes all 5 CLI commands as true subprocesses (`python -m src.cli.<command>`) to guarantee entrypoint stability.
 
----
-
-## 3. Overstated Validation Claims Corrected
-
-1. **"100% Setup Success"**:
-   - *Original Claim*: Represented as a production setup success rate.
-   - *Correction*: Clarified as "100% test pass rate across current validation fixtures".
-2. **"Clean Machine Onboarding Passed"**:
-   - *Original Claim*: Represented as a completed clean OS installation test.
-   - *Correction*: Clarified as a dependency simulation test; a manual VM test is required for final verification.
-3. **"Setup Wizard Functionality"**:
-   - *Original Claim*: Setup documentation claimed key entry and Docker checks were active.
-   - *Correction*: Fully implemented in `src/cli/setup.py`.
+### Finding 9: `src/discovery/model_scanner.py` (Heuristic Model Discovery vs Real Evidence System)
+- **Status Before Audit**: Inferred model capabilities, VRAM requirements, context windows (defaulting to 8192), and cloud catalogs from model name strings while falsely tagging them `source="empirical", tested=True`.
+- **Fix Performed**: Redesigned Model Discovery around a strict **3-Layer Evidence System**:
+  1. **Runtime Metadata (`runtime_metadata`)**: Query Ollama `/api/tags` and `/api/show` to extract exact digest, model size (bytes), quantization level (`Q4_K_M`, `FP16`), and parameters.
+  2. **Provider Metadata (`provider_metadata`)**: Query live provider APIs (`/v1/models` on Groq, OpenAI, Anthropic, OpenRouter) when credentials exist. If API calls fail or keys are absent, no models are fabricated.
+  3. **Empirical Capability Probing (`empirical`)**: Built `CapabilityProbeEngine` (`src/capabilities/probe_engine.py`) backed by empirical probe fixtures and disk caching. Unprobed models carry `confidence = 0.0` (`UNKNOWN`).
+  4. **Derived Hardware Estimates (`estimated`)**: VRAM/RAM requirements are calculated directly from artifact byte sizes + quantization & KV cache overhead (`is_estimated = True`).
+  5. **Explicit Uncertainty (`unknown`)**: Context windows or unprobed capabilities are explicitly set to `None` / `confidence = 0.0`. The resolver enforces a 0.1x penalty on unverified models to prevent unknown models from beating empirically proven ones.
 
 ---
 
-## 4. Remaining Intentional Stubs
+## 3. Provenance & Evidence Breakdown
 
-- **`src/testing/mock_adapter.py`**:
-  - *Purpose*: Isolated test fixture derived from `RuntimeAdapter`.
-  - *Justification*: Used exclusively in unit tests (`tests/unit/test_runtime_decoupling.py`) to verify multi-runtime registry mechanics without making network/Docker calls.
+| Attribute | Provenance Source | Description | Confidence |
+| :--- | :--- | :--- | ---: |
+| **Model ID & Digest** | `runtime_metadata` / `provider_metadata` | Discovered directly via `/api/tags`, `/api/show`, or `/v1/models` | 1.00 |
+| **VRAM / RAM Requirements** | `estimated` | Derived mathematically from model artifact byte size + overhead | 0.70 |
+| **Context Window** | `runtime_metadata` / `provider_metadata` | Extracted from GGUF metadata or provider API; `None` if unexposed | 1.00 if present, 0.00 if `UNKNOWN` |
+| **Empirical Capabilities** | `empirical` | Populated from empirical test suites & probe cache for tested models | 0.85 – 0.98 |
+| **Unprobed Capabilities** | `unknown` | Set to 0.0 for unprobed models; penalized by Resolver | 0.00 |
 
 ---
 
-## 5. Verification & Test Suite
+## 4. Overstated Validation Claims Corrected
+
+1. **"100% Setup Success"**: Clarified as "100% test pass rate across current validation fixtures".
+2. **"Clean Machine Onboarding Passed"**: Clarified as a dependency simulation test; a manual VM test is required for final verification.
+3. **"Setup Wizard Functionality"**: Fully implemented in `src/cli/setup.py`.
+4. **"Empirical Evidence Claims"**: Removed false `empirical` tags from unprobed models. Only models with verified probe results carry `source="empirical"`.
+
+---
+
+## 5. Remaining Intentional Stubs
+
+- **`src/testing/mock_adapter.py`**: Isolated test fixture derived from `RuntimeAdapter` for unit testing decoupling without network/Docker calls.
+
+---
+
+## 6. Verification & Test Suite
 
 The following automated tests verify implementation integrity:
+- `tests/unit/test_model_evidence.py` (5 tests for evidence provenance, runtime metadata, provider API discovery, and uncertainty handling)
 - `tests/unit/test_resolver_fixtures.py` (Resolver policies & UNKNOWN safety)
 - `tests/unit/test_runtime_decoupling.py` (Multi-runtime registry decoupling)
 - `tests/integration/test_failure_paths.py` (17-point failure scenario matrix)
@@ -96,8 +109,8 @@ The following automated tests verify implementation integrity:
 
 ---
 
-## 6. Final GO / NO-GO Assessment
+## 7. Final GO / NO-GO Assessment
 
 **Final Determination:** `CONDITIONAL GO` (Core Frozen)
 
-All functionality claimed in documentation and specifications is now fully implemented without mock fallbacks or fake success responses. All 5 CLI module entrypoints (`scan`, `doctor`, `setup`, `recommend`, `run`) have been validated via automated subprocess tests and direct manual invocation. The AgentHost v0.1 core is frozen, and final release is conditional only on manual verification on a fresh Windows VM.
+All functionality claimed in documentation and specifications is now backed by a genuine **Model Discovery + Evidence System**. All 5 CLI module entrypoints (`scan`, `doctor`, `setup`, `recommend`, `run`) have been validated via automated subprocess tests and direct manual invocation. The AgentHost v0.1 core is frozen, and final release is conditional only on manual verification on a fresh Windows VM.

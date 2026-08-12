@@ -1,0 +1,46 @@
+import os
+import urllib.request
+import json
+from typing import List
+from .base import BaseProviderAdapter
+from ...domain.schemas.model import (
+    ModelProfile, ProviderInfo, HardwareRequirements,
+    Capabilities, Context, Economics, Limits, Evidence
+)
+
+class OpenAIProviderAdapter(BaseProviderAdapter):
+    def discover_models(self) -> List[ModelProfile]:
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            return []
+
+        url = "https://api.openai.com/v1/models"
+        try:
+            req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
+            with urllib.request.urlopen(req, timeout=5.0) as resp:
+                if resp.status == 200:
+                    data = json.loads(resp.read().decode('utf-8'))
+                    models_data = data.get("data", [])
+                    
+                    profiles = []
+                    for m in models_data:
+                        m_id = m.get("id")
+                        if not m_id or not ("gpt" in m_id or "o1" in m_id or "o3" in m_id):
+                            continue
+                        
+                        profile = ModelProfile(
+                            id=f"openai/{m_id}",
+                            provider=ProviderInfo(id="openai", type="cloud"),
+                            hardware=HardwareRequirements(vram_required_gb=0.0, ram_required_gb=0.0, is_estimated=False),
+                            capabilities=Capabilities(),
+                            context=Context(window=None),
+                            economics=Economics(cost_per_1m_input=None, cost_per_1m_output=None),
+                            limits=Limits(tpm=None),
+                            evidence=Evidence(source="provider_metadata", tested=False, confidence=0.0)
+                        )
+                        profiles.append(profile)
+                    return profiles
+        except Exception:
+            pass
+
+        return []

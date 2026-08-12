@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal
+
+ProvenanceType = Literal["runtime_metadata", "provider_metadata", "empirical", "estimated", "unknown"]
 
 class ProviderInfo(BaseModel):
     id: str
@@ -8,6 +10,7 @@ class ProviderInfo(BaseModel):
 class HardwareRequirements(BaseModel):
     vram_required_gb: Optional[float] = None
     ram_required_gb: Optional[float] = None
+    is_estimated: bool = True
 
 class Capabilities(BaseModel):
     coding: float = Field(default=0.0, ge=0.0, le=1.0)
@@ -16,23 +19,24 @@ class Capabilities(BaseModel):
     vision: float = Field(default=0.0, ge=0.0, le=1.0)
 
 class Context(BaseModel):
-    window: int
+    window: Optional[int] = None  # None represents UNKNOWN context window
 
 class Economics(BaseModel):
-    cost_per_1m_input: float = 0.0
-    cost_per_1m_output: float = 0.0
+    cost_per_1m_input: Optional[float] = None
+    cost_per_1m_output: Optional[float] = None
 
 class Limits(BaseModel):
     tpm: Optional[int] = None
 
 class Evidence(BaseModel):
-    source: str
-    tested: bool
+    source: ProvenanceType = "unknown"
+    tested: bool = False
     test_suite: Optional[str] = None
     confidence: float = Field(default=0.0, ge=0.0, le=1.0)
 
 class ModelProfile(BaseModel):
     id: str
+    digest: Optional[str] = None
     provider: ProviderInfo
     hardware: HardwareRequirements
     capabilities: Capabilities

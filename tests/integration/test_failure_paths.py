@@ -29,9 +29,9 @@ class TestFailurePaths(unittest.TestCase):
         self.assertEqual(len(profiles), 0)
         self.assertIn("Excluded: Docker not running.", explain.get("agent_zero", ""))
 
-    @patch('src.discovery.model_scanner.ModelScanner.scan_ollama')
-    def test_ollama_offline(self, mock_scan):
-        mock_scan.return_value = []
+    @patch('src.discovery.providers.ollama.OllamaProviderAdapter.discover_models')
+    def test_ollama_offline(self, mock_discover):
+        mock_discover.return_value = []
         builder = InventoryBuilder()
         inventory = builder.build()
         # Ensure no local models are returned

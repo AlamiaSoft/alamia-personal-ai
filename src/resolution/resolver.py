@@ -31,9 +31,9 @@ class ExecutionProfileResolver:
             elif cost > policy.max_monthly_cost:
                 score -= 1.0 # Penalty for exceeding cost policy
         
-        # Preference bonus (not absolute exclusion)
-        if policy.local_preferred and model.provider.type == "local":
-            score += 0.5 # Give local models a strong edge, but allow cloud to win if capability disparity is massive
+        # Preference bonus (only granted if capability evidence is verified)
+        if policy.local_preferred and model.provider.type == "local" and model.evidence.confidence > 0.40:
+            score += 0.5 # Give verified local models a strong edge
             
         return score
 
@@ -77,6 +77,11 @@ class ExecutionProfileResolver:
                 if not requirements.cloud_allowed:
                     explainability[model.id] = "Excluded: Cloud not allowed by task."
                     continue
+
+            # Provider constraint check (Execution Viability vs Model Capability)
+            if model.limits.tpm is not None and model.limits.tpm < 11300:
+                explainability[model.id] = f"Excluded: Provider TPM limit ({model.limits.tpm}) is insufficient for Agent Zero context requirements (~11.3k tokens/req). Execution profile NOT VIABLE."
+                continue
 
             # Check hardware fit (VRAM)
             if model.provider.type == "local" and model.hardware.vram_required_gb:
