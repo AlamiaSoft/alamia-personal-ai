@@ -29,7 +29,7 @@ AgentHost works best when it has a local runtime and local models to choose from
 Open PowerShell or Command Prompt and clone the repository:
 
 ```powershell
-git clone https://github.com/your-repo/agenthost.git
+git clone https://github.com/AlamiaSoft/alamia-personal-ai.git
 cd agenthost
 
 # Install dependencies (Optional: create a virtual environment first)
