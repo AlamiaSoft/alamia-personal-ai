@@ -30,5 +30,7 @@ class APIBridge:
                 else:
                     raise RuntimeError(f"Runtime returned HTTP {response.status}")
         except Exception as e:
-            # For MVP, mock success if actual service is down during testing
-            return ExecuteResult(success=True, response=f"Mock Bridge Response to: {req.message}")
+            return ExecuteResult(
+                success=False, 
+                response=f"API Bridge Error: Unable to reach Agent Zero endpoint ({self.endpoint}). Details: {str(e)}"
+            )

@@ -19,6 +19,5 @@ class JournalExtractor:
                     return Journal(logs=logs)
                 else:
                     raise RuntimeError(f"Log endpoint returned {response.status}")
-        except Exception:
-            # Mock MVP response
-            return Journal(logs=[f"[Mock Log] Context {context_id} initialized."])
+        except Exception as e:
+            return Journal(logs=[f"[ERROR] Failed to extract logs for context '{context_id}': {str(e)}"])
