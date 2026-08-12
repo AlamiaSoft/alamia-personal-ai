@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="nova">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c14" id="theme-color-meta">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Your Agent">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Your%20Agent","short_name":"Agent","display":"standalone","start_url":".","background_color":"%230b0c14","theme_color":"%238b7cf6","icons":[{"src":"data:image/svg%2Bxml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%238b7cf6%27/%3E%3Ctext x=%2750%27 y=%2766%27 font-size=%2755%27 text-anchor=%27middle%27 fill=%27white%27%3E%E2%9C%A6%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg%2Bxml"}]}'>
+<title>Your Agent — Interactive Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;1,500&family=Baloo+2:wght@500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Bungee&family=Quicksand:wght@500;600;700&family=Orbitron:wght@500;700;900&family=Anton&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<!-- ============ SIDEBAR ============ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="brand"><i data-lucide="bot"></i></div>
+    <button class="drawer-close" id="drawer-close" aria-label="Close menu"><i data-lucide="x"></i></button>
+  </div>
+  <button class="nav-item active" data-screen="dashboard"><i data-lucide="home"></i><span class="nav-label">Dashboard</span><span class="tip">Dashboard</span></button>
+  <button class="nav-item" data-screen="onboarding"><i data-lucide="compass"></i><span class="nav-label">Setup</span><span class="tip">Setup</span></button>
+  <button class="nav-item" data-screen="profile"><i data-lucide="target"></i><span class="nav-label">Execution Profile</span><span class="tip">Execution Profile</span></button>
+  <button class="nav-item" data-screen="diagnostics"><i data-lucide="stethoscope"></i><span class="nav-label">Diagnostics</span><span class="tip">Diagnostics</span></button>
+  <button class="nav-item" data-screen="chat"><i data-lucide="message-circle"></i><span class="nav-label">Chat</span><span class="tip">Chat</span></button>
+  <button class="nav-item" data-screen="skills"><i data-lucide="sparkles"></i><span class="nav-label">Skills</span><span class="tip">Skills</span></button>
+  <button class="nav-item" data-screen="automations"><i data-lucide="zap"></i><span class="nav-label">Automations</span><span class="tip">Automations</span></button>
+  <button class="nav-item" data-screen="memory"><i data-lucide="brain"></i><span class="nav-label">Memory</span><span class="tip">Memory</span></button>
+  <button class="nav-item" data-screen="permissions"><i data-lucide="shield-check"></i><span class="nav-label">Permissions</span><span class="tip">Permissions</span></button>
+  <button class="nav-item" data-screen="integrations"><i data-lucide="plug"></i><span class="nav-label">Integrations</span><span class="tip">Integrations</span></button>
+  <div class="spacer"></div>
+  <button class="nav-item" data-screen="settings"><i data-lucide="settings"></i><span class="nav-label">Settings</span><span class="tip">Settings</span></button>
+</nav>
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+<!-- ============ MAIN ============ -->
+<main class="main">
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+      <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu"><i data-lucide="menu"></i></button>
+      <div class="screen-title">Your Agent <span style="opacity:.4">/</span> <b id="topbar-label">Dashboard</b></div>
+    </div>
+    <div class="theme-picker" id="theme-picker" title="Theme">
+      <span style="font-size:11.5px; color:var(--text-faint); margin-right:2px;">Theme</span>
+      <div class="swatch active" data-t="nova"></div>
+      <div class="swatch" data-t="bloom"></div>
+      <div class="swatch" data-t="halftone"></div>
+      <div class="swatch" data-t="terra"></div>
+      <div class="swatch" data-t="arcade"></div>
+      <div class="swatch" data-t="ink"></div>
+    </div>
+    <div style="position:relative;">
+      <button class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Change theme"><i data-lucide="palette"></i></button>
+      <div class="theme-sheet" id="theme-sheet">
+        <div class="swatch" data-t="nova"></div>
+        <div class="swatch" data-t="bloom"></div>
+        <div class="swatch" data-t="halftone"></div>
+        <div class="swatch" data-t="terra"></div>
+        <div class="swatch" data-t="arcade"></div>
+        <div class="swatch" data-t="ink"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ ONBOARDING ============ -->
+    <section class="screen" id="screen-onboarding">
+      <div class="wizard">
+        <div class="steps-track">
+          <div class="step-dot done" data-step="0"></div>
+          <div class="step-dot" data-step="1"></div>
+          <div class="step-dot" data-step="2"></div>
+          <div class="step-dot" data-step="3"></div>
+          <div class="step-dot" data-step="4"></div>
+          <div class="step-dot" data-step="5"></div>
+        </div>
+
+        <!-- step 0 -->
+        <div class="wiz-card wiz-step" data-step="0">
+          <h2>Welcome 👋</h2>
+          <p class="sub">I resolve the best runtime, model, and mode for each task from actual discovered evidence — never from guessing off a model's name. Let's scan your setup — it takes about two minutes.</p>
+          <div class="card" style="margin-top:auto;">
+            <div style="display:flex; gap:14px; align-items:center;">
+              <div class="focus-ring" style="width:52px;height:52px;"><span style="width:40px;height:40px;font-size:12px;">86%</span></div>
+              <div style="font-size:13px; color:var(--text-dim);">Most people are running a fully working setup within <b style="color:var(--text)">5 minutes</b> of opening this screen.</div>
+            </div>
+          </div>
+          <div class="wiz-nav"><span></span><button class="btn wiz-next">Start setup →</button></div>
+        </div>
+
+        <!-- step 1: detect -->
+        <div class="wiz-card wiz-step" data-step="1" style="display:none;">
+          <h2>Scanning your environment</h2>
+          <p class="sub">Discovering hardware, runtimes, and local models — this is the evidence everything else is resolved from.</p>
+          <div class="card">
+            <div class="detect-row"><span>GPU</span><span class="check-badge">✓ NVIDIA GTX 1080 Ti — 11.0 GB VRAM</span></div>
+            <div class="detect-row"><span>Memory</span><span class="check-badge">✓ 32 GB RAM</span></div>
+            <div class="detect-row"><span>Docker daemon</span><span class="check-badge">✓ Connected — v27.3.1</span></div>
+            <div class="detect-row"><span>Ollama</span><span class="check-badge">✓ Reachable at 127.0.0.1:11434 — 6 models</span></div>
+            <div class="detect-row"><span>Network</span><span class="check-badge">✓ Online</span></div>
+          </div>
+          <div class="card" style="margin-top:14px;">
+            <div style="font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Structural candidate</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div><div style="font-weight:700; font-family:var(--font-display);">Agent Zero 2.8 + ollama/deepseek-r1:14b</div><div style="font-size:12.5px; color:var(--text-dim);">Fits your VRAM · capability evidence unverified</div></div>
+              <span class="pill" style="background:var(--warn); color:#2a2000;">Unverified</span>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 2: mode -->
+        <div class="wiz-card wiz-step" data-step="2" style="display:none;">
+          <h2>Operational mode</h2>
+          <p class="sub">This controls whether I'm allowed to consider cloud providers at all. You can change it anytime — nothing cloud-based runs until you explicitly enable a provider, even if a key is detected.</p>
+          <div class="opt-grid" style="grid-template-columns:1fr;">
+            <div class="opt-card selected" data-mode-option data-mode="local">
+              <div class="oc-title">🖥️ Local-only</div><div class="oc-sub">Only Ollama / local runtimes are ever considered. No data leaves this machine.</div>
+            </div>
+            <div class="opt-card" data-mode-option data-mode="cloud">
+              <div class="oc-title">☁️ Cloud-enabled</div><div class="oc-sub">Local is still preferred; cloud providers you explicitly enable can be used as fallback.</div>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 3: focus areas -->
+        <div class="wiz-card wiz-step" data-step="3" style="display:none;">
+          <h2>What do you want help with?</h2>
+          <p class="sub">Pick as many as you like — this shapes which skills I suggest first. You can change this anytime.</p>
+          <div class="opt-grid">
+            <div class="opt-card selected" data-toggle data-focus="work">
+              <div class="oc-title">💼 Work</div><div class="oc-sub">Email, docs, meetings</div>
+            </div>
+            <div class="opt-card selected" data-toggle data-focus="coding">
+              <div class="oc-title">💻 Coding</div><div class="oc-sub">Repos, reviews, debugging</div>
+            </div>
+            <div class="opt-card" data-toggle data-focus="research">
+              <div class="oc-title">🔍 Research</div><div class="oc-sub">Deep dives, summaries</div>
+            </div>
+            <div class="opt-card" data-toggle data-focus="files">
+              <div class="oc-title">📁 Files</div><div class="oc-sub">Organizing, cleanup</div>
+            </div>
+            <div class="opt-card selected" data-toggle data-focus="calendar">
+              <div class="oc-title">📅 Calendar</div><div class="oc-sub">Scheduling, reminders</div>
+            </div>
+            <div class="opt-card" data-toggle data-focus="automation">
+              <div class="oc-title">⚡ Automation</div><div class="oc-sub">Recurring workflows</div>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 4: connect (provider activation contract) -->
+        <div class="wiz-card wiz-step" data-step="4" style="display:none;">
+          <h2>Providers</h2>
+          <p class="sub">A detected API key never activates a provider on its own — you enable each one explicitly.</p>
+          <div style="max-height:270px; overflow-y:auto; padding-right:4px;">
+            <div class="provider-row">
+              <div class="tli-left">✉️ Google</div>
+              <span class="key-badge found">Key found</span>
+              <div class="switch on" data-switch data-integration="google"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">🐙 GitHub</div>
+              <span class="key-badge found">Key found</span>
+              <div class="switch on" data-switch data-integration="github"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">🌐 OpenRouter</div>
+              <span class="key-badge found">Key found</span>
+              <div class="switch" data-switch data-integration="openrouter"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">◆ Anthropic</div>
+              <span class="key-badge missing">No key detected</span>
+              <div class="switch" data-switch data-integration="anthropic" data-disabled="true"></div>
+            </div>
+            <div class="provider-row">
+              <div class="tli-left">💬 Slack</div>
+              <span class="key-badge missing">No key detected</span>
+              <div class="switch" data-switch data-integration="slack" data-disabled="true"></div>
+            </div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next">Continue →</button></div>
+        </div>
+
+        <!-- step 5: personality + theme -->
+        <div class="wiz-card wiz-step" data-step="5" style="display:none;">
+          <h2>Make it yours</h2>
+          <p class="sub">Set how I communicate, and pick a look. Both are just a starting point — change either anytime in Settings.</p>
+          <div class="slider-row">
+            <label>How proactive should I be?</label>
+            <div class="seg">
+              <button>Only when asked</button><button class="active">Suggest actions</button><button>Manage things</button>
+            </div>
+          </div>
+          <div class="slider-row">
+            <label>Pick a theme</label>
+            <div class="theme-gallery" id="onboard-theme-gallery"></div>
+          </div>
+          <div class="wiz-nav"><button class="btn ghost wiz-back">Back</button><button class="btn wiz-next" id="finish-setup">Finish setup ✓</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="screen active" id="screen-dashboard">
+      <div class="hero-greet">
+        <div>
+          <h1>Good morning <span style="color:var(--accent)">✦</span></h1>
+          <p>Your agent is ready to help you focus on what matters most today.</p>
+        </div>
+        <div style="text-align:right;">
+          <div class="focus-ring"><span>86%</span></div>
+          <div style="font-size:11px; color:var(--text-faint); margin-top:6px;">Focus score</div>
+        </div>
+      </div>
+
+      <div class="ask-box">
+        <span style="color:var(--text-faint)">✦</span>
+        <input placeholder="Ask anything, or tell me what you want done…">
+        <button class="btn sm">Ask</button>
+      </div>
+
+      <div class="suggest-row" id="suggest-row">
+        <div class="suggest-chip" data-focus="work">⚡ Check my tasks</div>
+        <div class="suggest-chip" data-focus="work">📧 Summarize today's email</div>
+        <div class="suggest-chip" data-focus="research">🔍 Research something</div>
+        <div class="suggest-chip" data-focus="coding">💻 Work on my project</div>
+      </div>
+
+      <div class="grid g3" style="margin-bottom:16px;">
+        <div class="card">
+          <h3>✉️ Email — Summary <span class="count">8 unread</span></h3>
+          <div class="email-row"><div class="avatar-dot"></div><div class="line"></div></div>
+          <div class="email-row"><div class="avatar-dot"></div><div class="line sm"></div></div>
+          <div class="email-row"><div class="avatar-dot"></div><div class="line"></div></div>
+          <div class="summary-banner">✦ 8 unread emails summarized — nothing urgent</div>
+        </div>
+        <div class="card">
+          <h3>📅 Calendar — Today</h3>
+          <div class="cal-row"><span style="width:36px;">9 AM</span><div class="bar filled" style="width:60%"></div></div>
+          <div class="cal-row"><span style="width:36px;">11 AM</span><div class="bar filled"></div></div>
+          <div class="cal-row"><span style="width:36px;">1 PM</span><div class="bar"></div></div>
+          <div class="cal-row"><span style="width:36px;">2 PM</span><div class="bar filled" style="width:80%"></div></div>
+          <div class="cal-row"><span style="width:36px;">4 PM</span><div class="bar filled" style="width:40%"></div></div>
+        </div>
+        <div class="card">
+          <h3>📄 Research Brief</h3>
+          <div style="height:76px; border-radius:10px; background:var(--grad),var(--bg-2); display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:10px;">📑</div>
+          <div style="font-size:12.5px; color:var(--text-dim); line-height:1.6;">3 key findings on competitor pricing ready to review.</div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <h3>⚡ Automations — Active <span class="count">4 running</span></h3>
+          <div class="autom-row"><span>📬</span><div style="flex:1;"><div style="font-size:13.5px; font-weight:500;">Sort & summarize new emails</div><div style="font-size:11.5px; color:var(--text-faint);">Runs every 15 minutes</div></div><span class="pill on">Active</span></div>
+          <div class="autom-row"><span>📅</span><div style="flex:1;"><div style="font-size:13.5px; font-weight:500;">Schedule meetings & invites</div><div style="font-size:11.5px; color:var(--text-faint);">Weekdays, 9:00 AM</div></div><span class="pill on">Active</span></div>
+          <div class="autom-row"><span>📊</span><div style="flex:1;"><div style="font-size:13.5px; font-weight:500;">Compile daily research brief</div><div style="font-size:11.5px; color:var(--text-faint);">Every morning, 7:00 AM</div></div><span class="pill on">Active</span></div>
+        </div>
+        <div class="card">
+          <h3>🎯 Today's focus</h3>
+          <div class="check-row done"><div class="box">✓</div><span>Review Q2 project updates</span></div>
+          <div class="check-row done"><div class="box">✓</div><span>Client call</span></div>
+          <div class="check-row"><div class="box"></div><span>Prepare strategy deck</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3>⚙ Active execution profile <span class="count">resolved in 0.32s</span></h3>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+          <div style="display:flex; gap:22px; flex-wrap:wrap;">
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Runtime</div><div style="font-weight:600; font-size:14px;">Agent Zero 2.8</div></div>
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Model</div><div style="font-weight:600; font-size:14px; font-family:var(--font-mono);">ollama/deepseek-r1:14b</div></div>
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Mode</div><div style="font-weight:600; font-size:14px;">Local</div></div>
+            <div><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px;">Cost</div><div style="font-weight:600; font-size:14px;">$0.00 / 1M tok</div></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="pill" style="background:var(--warn); color:#2a2000;">Structural fit — unverified</span>
+            <button class="btn sm ghost" onclick="document.querySelector('.nav-item[data-screen=\'profile\']').click()">View reasoning →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EXECUTION PROFILE ============ -->
+    <section class="screen" id="screen-profile">
+      <h2 class="section-title">Execution profile resolver</h2>
+      <p class="section-sub">Describe a task. I'll resolve the best runtime + model + mode from actual discovered evidence — never from model-name guessing.</p>
+      <div class="nl-box" style="margin-bottom:20px;">
+        <input id="profile-task-input" placeholder="e.g. write a python script to scrape a website" value="write a python script to scrape a website">
+        <button class="btn sm" id="profile-resolve-btn">Resolve</button>
+      </div>
+
+      <div class="card" id="profile-result">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em;">Recommended configuration</div>
+            <div class="display" style="font-size:19px; margin-top:2px;">Agent Zero 2.8 <span style="color:var(--text-faint); font-weight:400; font-size:14px;">+</span> <span style="font-family:var(--font-mono); font-size:16px;">ollama/deepseek-r1:14b</span></div>
+          </div>
+          <span class="pill" style="background:var(--warn); color:#2a2000;">Best structural candidate — capability unverified</span>
+        </div>
+
+        <div class="grid g3" style="margin-bottom:18px;">
+          <div class="card" style="box-shadow:none; padding:14px;"><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase;">Mode</div><div style="font-weight:600; margin-top:4px;">Local</div></div>
+          <div class="card" style="box-shadow:none; padding:14px;"><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase;">Capability confidence</div><div style="font-weight:600; margin-top:4px; color:var(--warn);">UNKNOWN (0% empirical)</div></div>
+          <div class="card" style="box-shadow:none; padding:14px;"><div style="font-size:11px; color:var(--text-faint); text-transform:uppercase;">Estimated cost</div><div style="font-weight:600; margin-top:4px;">$0.00 / 1M tokens</div></div>
+        </div>
+
+        <div style="font-size:12.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:8px;">Why</div>
+        <div style="display:flex; flex-direction:column; gap:7px; margin-bottom:18px;">
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Structural fit score: 0.59</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Browser → agent_zero runtime</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Code execution → agent_zero runtime</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Filesystem → agent_zero runtime</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Coding task → model capability unverified</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Structural fit → ollama/deepseek-r1:14b</span></div>
+          <div class="reason-row pass"><i data-lucide="check-circle-2"></i><span>Hardware → NVIDIA GeForce GTX 1080 Ti (11.0 GB VRAM available)</span></div>
+          <div class="reason-row warn"><i data-lucide="alert-triangle"></i><span>Capability evidence → UNKNOWN (0%)</span></div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px;">
+          <div style="font-size:13px; color:var(--text-dim);">Alternative: <span style="font-family:var(--font-mono); color:var(--text);">ollama/qwen3.5:4b</span> (Local)</div>
+          <div style="font-size:11.5px; color:var(--text-faint);">Resolved in 0.32s</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DIAGNOSTICS ============ -->
+    <section class="screen" id="screen-diagnostics">
+      <h2 class="section-title">Diagnostics</h2>
+      <p class="section-sub">Health checks and discovered inventory — the evidence the resolver reasons from.</p>
+
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:6px;">Health checks</h3>
+        <div class="diag-row pass"><i data-lucide="check-circle-2"></i><div class="dr-body"><div class="dr-t">Docker daemon</div><div class="dr-s">Connected — v27.3.1, 3 containers running</div></div></div>
+        <div class="diag-row pass"><i data-lucide="check-circle-2"></i><div class="dr-body"><div class="dr-t">Environment configuration</div><div class="dr-s">.env loaded, all required keys present</div></div></div>
+        <div class="diag-row pass"><i data-lucide="check-circle-2"></i><div class="dr-body"><div class="dr-t">Local model readiness</div><div class="dr-s">Ollama reachable at 127.0.0.1:11434 — 6 models available</div></div></div>
+        <div class="diag-row warn"><i data-lucide="alert-triangle"></i><div class="dr-body"><div class="dr-t">Cloud API endpoints</div><div class="dr-s">OpenRouter key detected but provider not enabled — see Integrations</div></div></div>
+        <div class="diag-row fail"><i data-lucide="x-circle"></i><div class="dr-body"><div class="dr-t">GPU driver version</div><div class="dr-s">nvidia-smi reports a driver update is available</div></div></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:6px;">Discovered inventory</h3>
+        <div class="detect-row"><span>Hardware</span><span class="check-badge">✓ NVIDIA GTX 1080 Ti — 11.0 GB VRAM · 32 GB RAM</span></div>
+        <div class="detect-row"><span>Runtimes</span><span class="check-badge">✓ Agent Zero 2.8 (Docker)</span></div>
+        <div class="detect-row"><span>Local models (Ollama)</span><span class="check-badge">✓ 6 found</span></div>
+        <div class="detect-row"><span>Cloud providers — keys found</span><span class="check-badge" style="color:var(--warn);">⚠ 2 found, 1 enabled</span></div>
+      </div>
+    </section>
+
+    <!-- ============ CHAT ============ -->
+    <section class="screen" id="screen-chat">
+      <div class="chat-wrap">
+        <div class="chat-log" id="chat-log">
+          <div class="msg agent">Hey — I noticed 43 files piled up in Downloads. Want me to sort them?</div>
+          <div class="msg user">yeah go ahead, but check with me before deleting anything</div>
+          <div class="msg agent">
+            Got it — I'll always ask first for deletions. Here's what I found:
+            <div class="action-card">
+              <ul>
+                <li>📄 18 PDFs → move to Documents</li>
+                <li>🖼️ 22 images → move to Pictures</li>
+                <li>⚠️ 3 exact duplicates → flagged for your review</li>
+              </ul>
+            </div>
+          </div>
+          <div class="msg user">do it</div>
+          <div class="msg agent">Done ✓ Moved 40 files. The 3 duplicates are waiting in a review folder whenever you get a chance to look.</div>
+        </div>
+        <div class="chat-input-row">
+          <input id="chat-input" placeholder="Ask anything or tell me what you want done…">
+          <button class="send-btn" id="chat-send"><i data-lucide="send" style="width:16px;height:16px;"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SKILLS ============ -->
+    <section class="screen" id="screen-skills">
+      <h2 class="section-title">Skills marketplace</h2>
+      <p class="section-sub">Install a skill and I'll gain the capability instantly — permissions are set automatically from your policy.</p>
+      <div class="grid g-auto" id="skills-grid">
+        <!-- injected by JS -->
+      </div>
+    </section>
+
+    <!-- ============ AUTOMATIONS ============ -->
+    <section class="screen" id="screen-automations">
+      <h2 class="section-title">Automations</h2>
+      <p class="section-sub">Recurring workflows I run on your behalf. Toggle any of them off, or teach me a new one below.</p>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="autom-full-row"><div class="autom-icon">📬</div><div class="autom-info"><div class="t">Sort & summarize new emails</div><div class="s">Runs every 15 minutes · Read + label only</div></div><div class="switch on" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">📅</div><div class="autom-info"><div class="t">Schedule meetings & send invites</div><div class="s">Weekdays, 9:00 AM · Asks before sending</div></div><div class="switch on" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">📊</div><div class="autom-info"><div class="t">Research & compile daily brief</div><div class="s">Every morning, 7:00 AM</div></div><div class="switch on" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">✅</div><div class="autom-info"><div class="t">Follow up on action items</div><div class="s">Every day, 5:00 PM</div></div><div class="switch" data-switch></div></div>
+        <div class="autom-full-row"><div class="autom-icon">💰</div><div class="autom-info"><div class="t">Price monitor — 3 tracked sites</div><div class="s">Weekly, Fridays · Notifies only</div></div><div class="switch on" data-switch></div></div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:8px;">💬 Teach me a new one</h3>
+        <p style="font-size:13px; color:var(--text-dim); margin-bottom:14px;">Describe a workflow in plain language and I'll turn it into a recurring automation.</p>
+        <div class="nl-box"><input placeholder="e.g. Every Friday, check these 3 sites and tell me if prices changed"><button class="btn sm">Create</button></div>
+      </div>
+    </section>
+
+    <!-- ============ MEMORY ============ -->
+    <section class="screen" id="screen-memory">
+      <h2 class="section-title">Memory</h2>
+      <p class="section-sub">What I've learned about how you work. Nothing here changes risky behavior without asking you first.</p>
+      <div class="card">
+        <div class="mem-item"><span class="mem-tag">Style</span><div><p>Prefers concise answers with links to sources rather than long explanations.</p><div class="src">Learned from 14 conversations</div></div></div>
+        <div class="mem-item"><span class="mem-tag">Tools</span><div><p>Uses local models for anything touching private files; cloud models for harder reasoning tasks.</p><div class="src">Learned from usage patterns</div></div></div>
+        <div class="mem-item"><span class="mem-tag">People</span><div><p>"The team" usually refers to Sana, Malik, and Ayesha on the design side.</p><div class="src">Learned from calendar + email</div></div></div>
+        <div class="mem-item"><span class="mem-tag">Policy</span><div><p>Always confirm before sending external emails, even routine ones.</p><div class="src">Set explicitly by you on Aug 3</div></div></div>
+        <div class="mem-item"><span class="mem-tag">Projects</span><div><p>"The Oracle box" refers to the always-on home server used for automations.</p><div class="src">Learned from 6 conversations</div></div></div>
+      </div>
+    </section>
+
+    <!-- ============ PERMISSIONS ============ -->
+    <section class="screen" id="screen-permissions">
+      <h2 class="section-title">Autonomy & permissions</h2>
+      <p class="section-sub">Click any cell to cycle its permission level. This is the one place that controls what I'm allowed to do without asking.</p>
+      <div class="card">
+        <table class="perm-table">
+          <thead><tr><th>Capability</th><th>Level</th></tr></thead>
+          <tbody id="perm-body">
+            <tr><td>Read files</td><td><span class="perm-cell auto" data-cycle>AUTO</span></td></tr>
+            <tr><td>Write files</td><td><span class="perm-cell suggest" data-cycle>SUG</span></td></tr>
+            <tr><td>Run shell commands</td><td><span class="perm-cell ask" data-cycle>ASK</span></td></tr>
+            <tr><td>Send email</td><td><span class="perm-cell ask" data-cycle>ASK</span></td></tr>
+            <tr><td>Delete files</td><td><span class="perm-cell off" data-cycle>OFF</span></td></tr>
+            <tr><td>Make a purchase</td><td><span class="perm-cell off" data-cycle>OFF</span></td></tr>
+            <tr><td>Deploy code</td><td><span class="perm-cell ask" data-cycle>ASK</span></td></tr>
+          </tbody>
+        </table>
+        <div class="perm-legend">
+          <span><div class="dot" style="color:var(--good)"></div>AUTO — does it without asking</span>
+          <span><div class="dot" style="color:var(--accent-2)"></div>SUGGEST — proposes it first</span>
+          <span><div class="dot" style="color:var(--warn)"></div>ASK — always confirms</span>
+          <span><div class="dot" style="color:var(--text-faint)"></div>OFF — never does this</span>
+        </div>
+        <div class="nl-box"><input placeholder="e.g. You can automatically organize my Downloads folder"><button class="btn sm">Set policy</button></div>
+      </div>
+    </section>
+
+    <!-- ============ INTEGRATIONS ============ -->
+    <section class="screen" id="screen-integrations">
+      <h2 class="section-title">Integrations</h2>
+      <p class="section-sub">Connect the services I should work with. Everything is optional and can be revoked anytime.</p>
+      <div class="grid g2">
+        <div>
+          <div class="int-group">
+            <h4>AI models</h4>
+            <div class="int-item"><div class="ii-icon">🖥️</div><div class="ii-name">Local models</div><span class="pill on">Connected</span></div>
+            <div class="int-item"><div class="ii-icon">◆</div><div class="ii-name">Anthropic</div><span class="pill on">Connected</span></div>
+            <div class="int-item"><div class="ii-icon">🌐</div><div class="ii-name">OpenRouter</div><button class="btn sm ghost">Connect</button></div>
+          </div>
+          <div class="int-group">
+            <h4>Work</h4>
+            <div class="int-item" data-int="google"><div class="ii-icon">✉️</div><div class="ii-name">Google</div><span class="pill on">Connected</span></div>
+            <div class="int-item" data-int="microsoft"><div class="ii-icon">🪟</div><div class="ii-name">Microsoft</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item" data-int="github"><div class="ii-icon">🐙</div><div class="ii-name">GitHub</div><span class="pill on">Connected</span></div>
+            <div class="int-item" data-int="slack"><div class="ii-icon">💬</div><div class="ii-name">Slack</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item" data-int="notion"><div class="ii-icon">📓</div><div class="ii-name">Notion</div><button class="btn sm ghost">Connect</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="int-group">
+            <h4>Automation</h4>
+            <div class="int-item"><div class="ii-icon">🔗</div><div class="ii-name">n8n</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item"><div class="ii-icon">⚡</div><div class="ii-name">Zapier</div><button class="btn sm ghost">Connect</button></div>
+            <div class="int-item"><div class="ii-icon">🏠</div><div class="ii-name">Home Assistant</div><button class="btn sm ghost">Connect</button></div>
+          </div>
+          <div class="int-group">
+            <h4>Always-on node</h4>
+            <div class="int-item"><div class="ii-icon">☁️</div><div class="ii-name">Oracle A1Flex server</div><span class="pill on">Online</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="screen" id="screen-settings">
+      <h2 class="section-title">Settings</h2>
+      <p class="section-sub">Make the agent look and behave like yours. Any user can build their own theme — this is a starter set.</p>
+
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:14px;">Appearance</h3>
+        <div class="theme-gallery" id="settings-theme-gallery"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:18px;">
+        <h3 style="margin-bottom:14px;">Response style</h3>
+        <div class="slider-row" style="margin-bottom:0;">
+          <div class="seg"><button>Concise</button><button class="active">Balanced</button><button>Detailed</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Proactivity</h3>
+        <div class="seg"><button>Only when asked</button><button class="active">Suggest actions</button><button>Manage things</button></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

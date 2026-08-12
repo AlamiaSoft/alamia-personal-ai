@@ -48,8 +48,11 @@ Clone the repository and run the setup wizard:
 git clone https://github.com/AlamiaSoft/alamia-personal-ai.git
 cd alamia-personal-ai
 
-# Run interactive setup wizard
+# Run interactive setup wizard (CLI)
 python -m src.cli.setup
+
+# Or launch the interactive Web Application (Recommended)
+python -m src.cli.app
 ```
 
 The setup wizard will:
@@ -63,7 +66,10 @@ The setup wizard will:
 
 ## 🚀 CLI Commands
 
-AgentHost provides 5 primary CLI entrypoints:
+AgentHost provides 6 primary CLI entrypoints:
+
+### `python -m src.cli.app`
+**Purpose**: Launches the full interactive Web UI and starts the local API server on port 8000.
 
 ### 1. `setup` — Interactive Onboarding Wizard
 ```bash
