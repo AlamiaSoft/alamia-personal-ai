@@ -1,8 +1,8 @@
-import os
 import urllib.request
 import json
 from typing import List
 from .base import BaseProviderAdapter
+from ...config import get_config_key
 from ...domain.schemas.model import (
     ModelProfile, ProviderInfo, HardwareRequirements,
     Capabilities, Context, Economics, Limits, Evidence
@@ -10,7 +10,7 @@ from ...domain.schemas.model import (
 
 class GroqProviderAdapter(BaseProviderAdapter):
     def discover_models(self) -> List[ModelProfile]:
-        api_key = os.environ.get("GROQ_API_KEY")
+        api_key = get_config_key("GROQ_API_KEY")
         if not api_key:
             return []
 

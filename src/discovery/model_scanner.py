@@ -36,18 +36,6 @@ class ModelScanner:
         Scans all configured providers for actually available models,
         and enriches them with empirical capability evidence.
         """
-        # Load environment variables from .env if present
-        if os.path.exists(".env"):
-            try:
-                with open(".env", "r", encoding="utf-8") as f:
-                    for line in f:
-                        line = line.strip()
-                        if "=" in line and not line.startswith("#"):
-                            k, v = line.split("=", 1)
-                            os.environ[k.strip()] = v.strip()
-            except Exception:
-                pass
-
         discovered_models: List[ModelProfile] = []
         
         try:
