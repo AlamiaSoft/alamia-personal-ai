@@ -1,0 +1,98 @@
+{
+  "models": [
+    {
+      "name": "qwen2.5-coder:7b",
+      "provider": "ollama",
+      "local": true,
+      "vram_gb": 4.7,
+      "context_window": 32768,
+      "tool_calling": "FAIL multi-tool",
+      "coding": "good",
+      "reasoning": "basic",
+      "latency": "~1-3 min per turn (GPU)",
+      "cost": "0 (local)",
+      "gpu_requirement": "NVIDIA GPU with 11+ GB VRAM",
+      "minimum_recommended_ram": "16 GB",
+      "provider_limits": "N/A (local)"
+    },
+    {
+      "name": "qwen2.5-coder:14b",
+      "provider": "ollama",
+      "local": true,
+      "vram_gb": 9.0,
+      "context_window": 32768,
+      "tool_calling": "FAIL multi-tool (5-strike guard)",
+      "coding": "strong",
+      "reasoning": "basic-medium",
+      "latency": "~1-3 min per turn (GPU)",
+      "cost": "0 (local)",
+      "gpu_requirement": "NVIDIA GPU with 11+ GB VRAM",
+      "minimum_recommended_ram": "24 GB",
+      "provider_limits": "N/A (local)"
+    },
+    {
+      "name": "llama-3.3-70b-versatile",
+      "provider": "groq",
+      "local": false,
+      "vram_gb": "cloud",
+      "context_window": 128000,
+      "tool_calling": "PASS (verified tool execution)",
+      "coding": "strong",
+      "reasoning": "strong",
+      "latency": "~5-15 sec per turn",
+      "cost": "free tier: 12k TPM (per model); exceeded after ~7.4k used",
+      "gpu_requirement": "N/A (cloud)",
+      "minimum_recommended_ram": "N/A",
+      "provider_limits": "TPM per model: 12k (llama-3.3-70b-versatile)"
+    },
+    {
+      "name": "deepseek-r1:14b",
+      "provider": "ollama",
+      "local": true,
+      "vram_gb": 9.0,
+      "context_window": 32768,
+      "tool_calling": "UNVERIFIED",
+      "coding": "good",
+      "reasoning": "strong (reasoning-oriented model)",
+      "latency": "~2-5 min per turn (GPU)",
+      "cost": "0 (local)",
+      "gpu_requirement": "NVIDIA GPU with 11+ GB VRAM",
+      "minimum_recommended_ram": "24 GB",
+      "provider_limits": "N/A (local)"
+    }
+  ],
+  "execution_profiles": [
+    {
+      "name": "Local Qwen 14B",
+      "runtime": "agent_zero",
+      "model": "qwen2.5-coder:14b",
+      "mode": "local",
+      "capabilities": {
+        "chat": "✓",
+        "coding": "✓",
+        "reasoning": "△",
+        "tool_calling": "✗ multi-tool",
+        "browser": "? (GUI required)",
+        "memory": "✓ (faiss backend)",
+        "tool_surface": "code_exe + file"
+      },
+      "best_for": "Simple chat, single‑tool tasks, arithmetic"
+    },
+    {
+      "name": "Hybrid Cloud+Local",
+      "runtime": "agent_zero",
+      "model": "Groq llama-3.3-70b-versatile (cloud) + qwen2.5-coder:14b (local)",
+      "mode": "hybrid",
+      "capabilities": {
+        "chat": "✓",
+        "coding": "✓",
+        "reasoning": "✓",
+        "tool_calling": "✓ (with reduced tool surface)",
+        "browser": "✓ (cloud)",
+        "memory": "✓ (faiss)",
+        "tool_surface": "code_exe + file + browser"
+      },
+      "best_for": "Agentic tasks, multi‑tool workflows, browser automation"
+    }
+  ]
+}

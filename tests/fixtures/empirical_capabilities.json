@@ -1,0 +1,37 @@
+{
+  "models": [
+    {
+      "id": "qwen:7b",
+      "known_capabilities": {
+        "basic_chat": true,
+        "single_tool": true,
+        "multi_tool": false
+      },
+      "confidence": 0.95
+    },
+    {
+      "id": "qwen:14b",
+      "known_capabilities": {
+        "basic_chat": true,
+        "single_tool": true,
+        "multi_tool": false
+      },
+      "confidence": 0.95
+    },
+    {
+      "id": "llama3.3:70b",
+      "known_capabilities": {
+        "basic_chat": true,
+        "single_tool": true,
+        "multi_tool": true
+      },
+      "confidence": 0.95,
+      "tpm_issue": true
+    },
+    {
+      "id": "deepseek:14b",
+      "known_capabilities": {},
+      "confidence": 0.0
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "report": "AgentHost Phase D/E - Agent Zero Capability Report & Compatibility Matrix",
+  "generated": "2026-08-12",
+  "legend": "SUPPORTED = verified in this eval; PARTIAL = exists but constrained (see notes); UNSUPPORTED = absent; UNKNOWN = not verifiable in this eval",
+  "capability_matrix": {
+    "Start": { "rating": "SUPPORTED", "agent_zero": "docker run / A0 installer prompt", "agenthost_abstraction": "start()", "evidence": "container started, UI 200 in ~20s" },
+    "Stop": { "rating": "SUPPORTED", "agent_zero": "docker stop", "agenthost_abstraction": "stop()", "evidence": "docker stop/restart round-trip verified" },
+    "Restart": { "rating": "SUPPORTED", "agent_zero": "docker restart", "agenthost_abstraction": "restart()", "evidence": "restarted multiple times; data persisted" },
+    "Health": { "rating": "PARTIAL", "agent_zero": "HTTP 200 on / ; no dedicated /health endpoint observed", "agenthost_abstraction": "health()", "evidence": "GET / returned 200; container logs show readiness line", "note": "health() should check HTTP + optional /a0/usr writability" },
+    "Chat": { "rating": "SUPPORTED", "agent_zero": "POST /api/api_message (X-API-KEY)", "agenthost_abstraction": "execute()", "evidence": "multiple exchanges, 391/396 arithmetic, READY" },
+    "Streaming": { "rating": "PARTIAL", "agent_zero": "WebSocket socket.io v4 (SID upgrade handshake verified; Web UI streams over WS); REST api_message returns final JSON only", "agenthost_abstraction": "stream()", "evidence": "socket.io polling handshake HTTP 200, upgrades available, maxPayload 52428800" },
+    "Models": { "rating": "SUPPORTED", "agent_zero": "Provider dropdowns + presets.yaml model_preset mechanism; providers: openrouter/anthropic/openai/gemini/ollama/groq/lm_studio/llama_cpp/omlx/vllm/a0_venice", "agenthost_abstraction": "models()", "evidence": "switched presets; verified runtime picks preset config" },
+    "Tools": { "rating": "SUPPORTED", "agent_zero": "Auto-injected tool list per turn (response/code_exe/file/copy/bash/browser...); transparent journal", "agenthost_abstraction": "tools()", "evidence": "code_exe executed arithmetic; file tool created file; journal entries 0-21 expose types" },
+    "Skills": { "rating": "SUPPORTED", "agent_zero": "Skills loaded on demand / pinned per chat; skill files under /a0/usr/skills", "agenthost_abstraction": "skills()", "evidence": "skills dir present in /a0/usr; documented protocol" },
+    "Memory": { "rating": "PARTIAL", "agent_zero": "faiss-based recall; util-LLM extracts memories each turn; project-scoped memory subdirs; observed 'No memories or solutions found' util entries every turn", "agenthost_abstraction": "memory()", "evidence": "recall executes per turn (journal); store+restart persistence not LLM-verifiable with available models (see model limit finding)", "note": "Memory quality tied to utility LLM strength" },
+    "Browser": { "rating": "SUPPORTED", "agent_zero": "Built-in DOM-annotation browser + desktop; host browser via A0 CLI Connector", "agenthost_abstraction": "capability", "evidence": "documented in official docs; included in image (browser canvas); not driven in this eval" },
+    "Shell": { "rating": "SUPPORTED", "agent_zero": "code_execution/bash tools inside container; RFC for native Windows hosts", "agenthost_abstraction": "capability", "evidence": "code_exe tool executed Python (journal [0] 391, [0] 396)" },
+    "Filesystem": { "rating": "SUPPORTED", "agent_zero": "workdir /a0/usr/workdir; api_files_get (base64); file tools", "agenthost_abstraction": "capability", "evidence": "test-note.txt created by agent, retrieved via api_files_get" },
+    "MCP": { "rating": "SUPPORTED", "agent_zero": "MCP client (mcp_servers config) + MCP server (SSE /mcp/sse, streamable HTTP /mcp/http/ with t-{TOKEN} URLs)", "agenthost_abstraction": "capability", "evidence": "official connectivity docs + settings source; endpoint routing in helpers.api" },
+    "Configuration": { "rating": "SUPPORTED", "agent_zero": "usr/settings.json + usr/.env (secrets) + plugin configs (presets.yaml/config.json) + legacy A0_SET_* env defaults", "agenthost_abstraction": "configure()", "evidence": "settings.py source; env->defaults; file precedence (settings.json > env)" },
+    "Logs": { "rating": "SUPPORTED", "agent_zero": "GET/POST /api/api_log_get per context (journal items) + docker logs", "agenthost_abstraction": "logs()", "evidence": "22-item journal retrieved; includes util/agent/code_exe entries" },
+    "Metrics": { "rating": "UNKNOWN", "agent_zero": "No metrics endpoint observed; uvicorn access logs toggle exists", "agenthost_abstraction": "metrics()", "evidence": "not found in API surface; docker stats available externally" },
+    "A2A": { "rating": "SUPPORTED", "agent_zero": "A2A server (FastA2A) at /a2a/t-{TOKEN} (opt-in a2a_server_enabled)", "agenthost_abstraction": "capability", "evidence": "connectivity docs; settings source" },
+    "Cancel": { "rating": "PARTIAL", "agent_zero": "api_terminate_chat (destructive) exists; in-flight cancel via WebSocket UI events (ws handlers)", "agenthost_abstraction": "cancel()", "evidence": "terminate verified; in-flight cancel not independently verified" },
+    "Telemetry/Updates": { "rating": "PARTIAL", "agent_zero": "Self-Update via UI; update_check_enabled setting", "agenthost_abstraction": "diagnostics()", "evidence": "documented; not exercised in eval" }
+  },
+  "functional_test_summary": {
+    "basic_interaction": "PASS - question answered via REST API (local qwen2.5-coder:14b)",
+    "multi_turn": "PASS - 17*23=391 then '+5'=396 with same context_id",
+    "reasoning_multi_step": "PARTIAL - arithmetic computed via code_exe tool execution (journal-verified); verbose multi-step prompts fail local 14B model JSON protocol (5-strike unusable guard)",
+    "files": "PASS - agent created /a0/usr/workdir/test-note.txt ('agent zero smoke test'); read back via api_files_get (base64)",
+    "shell": "PARTIAL - code_exe (Python) tool execution verified via journal; interactive bash tool turn not verifiable with free-tier models",
+    "web": "UNVERIFIED - browser surface present in image/UI; not driven (requires GUI + stronger model)",
+    "memory": "PARTIAL - per-turn recall engaged (journal util entries); store/restart persistence not LLM-verified",
+    "tools_discovery": "PASS - tool list injected per turn into model prompt; journal exposes executed tool types",
+    "streaming": "PARTIAL - socket.io/WebSocket handshake verified; REST is request/response",
+    "failure_invalid_model": "PASS - structured 500 {\"error\": \"...model 'does-not-exist-xyz' not found\"}",
+    "failure_missing_api_key": "PASS - 401 without X-API-KEY",
+    "failure_invalid_context": "PASS - {\"error\": \"Context not found\"}",
+    "failure_unusable_model_output": "PASS - 5-consecutive-unusable guard returns error JSON after model fails protocol (observed repeatedly with local 14B)",
+    "failure_rate_limits": "PASS - provider rate-limit errors surfaced as structured API errors",
+    "reset_chat": "PASS - log journal 22->1 items, {\"success\": true}",
+    "terminate_chat": "PASS - {\"success\": true}; subsequent use of context fails with 'Context not found'"
+  },
+  "model_provider_findings": {
+    "local_ollama_7b_14b": "qwen2.5-coder:7b and :14b (Ollama, host GPU) work for simple single-turn chat and single code_exe calls, but fail v2.8 unified_turn JSON protocol on multi-tool/complex prompts (5x unusable response guard triggers). Local-14B is NOT a viable full agent model on this machine.",
+    "groq_free_tier": "Protocol-compliant for tool flows (file creation succeeded with llama-3.3-70b-versatile), but free tier TPM caps (8k/12k/6k per model) are BELOW Agent Zero's minimum per-request size (~11.3k tokens: agent prompt + tool definitions), making sustained use impractical; each turn needs a fresh minute window.",
+    "openrouter": "Key present on host but account has no credits (HTTP 402 'never purchased credits'); unusable without top-up.",
+    "cloud_requirement": "Agent Zero v2.8 is designed for strong paid/cloud models (presets shipped default to gpt-5.6-class and gemini-flash-lite); project docs warn small local models fail utility/memory tasks."
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "report": "AgentHost Phase A - Environment Discovery Report",
+  "generated": "2026-08-12",
+  "method": "Live machine inspection via PowerShell (CIM / registry / command detection)",
+  "facts": true,
+  "assumptions": [],
+  "os": {
+    "caption": "Microsoft Windows 11 Home",
+    "edition_id": "Core",
+    "version": "10.0.26200",
+    "build": 26200,
+    "architecture": "64-bit",
+    "channel": "Windows 11 Home (Get-ComputerInfo mislabels as 2009/Windows 10 Home due to edition reporting; build 26200 = Windows 11 25H2 line)"
+  },
+  "hardware": {
+    "motherboard": { "manufacturer": "Micro-Star International Co., Ltd.", "model": "MS-7D48" },
+    "cpu": { "name": "12th Gen Intel(R) Core(TM) i5-12400F", "cores": 6, "threads": 12, "base_clock_mhz": 2500 },
+    "ram_total_gb": 31.9,
+    "ram_free_gb": 21.2,
+    "gpu": { "name": "NVIDIA GeForce GTX 1080 Ti", "vram_mib": 11264, "vram_free_mib": 10224, "driver_version": "582.66" },
+    "disk": [
+      { "device": "C:", "size_gb": 463.9, "free_gb": 190.1 },
+      { "device": "E:", "size_gb": 488.3, "free_gb": 438.6 },
+      { "device": "F:", "size_gb": 465.2, "free_gb": 427.0 }
+    ]
+  },
+  "virtualization": {
+    "hypervisor_present": true,
+    "wsl_version": "2.6.3.0",
+    "wsl_distributions": [
+      { "name": "Ubuntu-24.04", "state": "stopped", "version": 2 },
+      { "name": "Ubuntu", "state": "stopped", "version": 2 },
+      { "name": "docker-desktop", "state": "stopped", "version": 2 }
+    ],
+    "vbs_status": "Virtualization-based security: Running"
+  },
+  "development_environment": {
+    "git": "2.52.0.windows.1",
+    "python": "3.12.10 (default), 3.13.14 via py launcher",
+    "uv": "0.11.24",
+    "pip": "25.0.1",
+    "node": "v24.13.0",
+    "npm": "11.6.2",
+    "pnpm": "10.28.1",
+    "git_lfs": "3.7.1",
+    "docker_cli": "29.6.1",
+    "docker_compose": "v5.1.4",
+    "docker_daemon": "NOT RUNNING (com.docker.service Stopped, manual start; docker-desktop WSL distro stopped)",
+    "pipx": "not installed",
+    "conda": "not installed",
+    "cuda_toolkit": "NOT on PATH (nvidia-smi present; CUDA usable only via driver/runtime, e.g. Ollama GPU path)"
+  },
+  "ai_environment": {
+    "ollama_version": "0.32.9",
+    "ollama_serving": true,
+    "ollama_endpoint": "http://localhost:11434",
+    "gpu_inference_verified": true,
+    "gpu_inference_note": "qwen2.5-coder:1.5b ran 100% GPU, 9.9s incl. load for 2 tokens",
+    "local_models": [
+      { "model": "qwen3.5:4b", "size_gb": 3.4 },
+      { "model": "qwen2.5-coder:7b", "size_gb": 4.7 },
+      { "model": "qwen2.5:7b", "size_gb": 4.7 },
+      { "model": "qwen2.5-coder:1.5b", "size_gb": 0.99 },
+      { "model": "qwen2.5-coder:14b", "size_gb": 9.0 },
+      { "model": "deepseek-r1:14b", "size_gb": 9.0 }
+    ],
+    "api_keys": {
+      "OPENROUTER_API_KEY": "SET (length 73, value not exposed)",
+      "GROQ_API_KEY": "SET (length 56, value not exposed)",
+      "OPENAI_API_KEY": "not set",
+      "ANTHROPIC_API_KEY": "not set",
+      "GEMINI_API_KEY": "not set",
+      "GOOGLE_API_KEY": "not set",
+      "AZURE_OPENAI_KEY": "not set",
+      "HF_TOKEN": "not set",
+      "MISTRAL_API_KEY": "not set",
+      "DEEPSEEK_API_KEY": "not set",
+      "TOGETHER_API_KEY": "not set"
+    }
+  },
+  "browsers": {
+    "chrome": "installed (C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe)",
+    "firefox": "not installed",
+    "edge": "not detected in Program Files",
+    "brave": "not detected"
+  },
+  "networking": {
+    "outbound_https": "OK (200 from https://www.google.com)",
+    "localhost": "OK (Ollama API responded on 127.0.0.1:11434)",
+    "listening_ports_of_interest": ["11434 (Ollama, all interfaces)"],
+    "firewall": {
+      "domain": { "enabled": true, "default_inbound": "NotConfigured", "default_outbound": "NotConfigured" },
+      "private": { "enabled": true, "default_inbound": "NotConfigured", "default_outbound": "NotConfigured" },
+      "public": { "enabled": true, "default_inbound": "NotConfigured", "default_outbound": "NotConfigured" }
+    }
+  },
+  "implications_for_agent_zero": {
+    "docker_based_install": "Docker Desktop installed but daemon currently stopped - must be started or WSL2 native path used",
+    "windows_first_class": "Native Windows Python 3.12/3.13 + uv available; Node 24 available",
+    "local_inference": "GTX 1080 Ti 11GB supports 7B-class models fully on GPU; 14B partially (9GB models fit in 11GB VRAM with small context)",
+    "cloud_inference": "OpenRouter + Groq keys available for cloud fallback / agent-cloud setups",
+    "existing_runtime": "Ollama already serves as model provider runtime on localhost:11434"
+  }
+}

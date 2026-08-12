@@ -1,0 +1,59 @@
+{
+  "report": "AgentHost Phase C - Agent Zero Installation Record",
+  "generated": "2026-08-12",
+  "facts": true,
+  "assumptions": [],
+  "installation_method": "Docker container (official image), manual docker CLI (preferred in playbook order: Docker first)",
+  "agent_zero_version": "v2.8 (commit 5ff106a2, 2026-08-01). Image digest sha256:8c5eff81a46fc956bc247e01a345beadc09acbeecf31873324b843dacf937c4c",
+  "image": "agent0ai/agent-zero:latest (12.4 GB, pulled from docker.io)",
+  "base_image": "Not exposed (official image); container Python 3.13.14 system + /opt/venv-a0 virtualenv (Python 3.12) for the app",
+  "container_name": "a0-eval",
+  "host_port": "5080 -> container 80 (HTTP, uvicorn on 0.0.0.0:80)",
+  "volume": "a0_eval_usr -> /a0/usr (user data: settings, agents, projects, memory, skills, plugins, uploads, workdir)",
+  "data_mounted": null,
+  "environment_variables_pass_1": [
+    "A0_SET_chat_model_provider=ollama",
+    "A0_SET_chat_model_name=qwen2.5-coder:7b",
+    "A0_SET_chat_model_api_url=http://host.docker.internal:11434",
+    "A0_SET_utility_model_provider=ollama",
+    "A0_SET_utility_model_name=qwen2.5-coder:7b",
+    "A0_SET_utility_model_api_url=http://host.docker.internal:11434"
+  ],
+  "environment_variables_note": "A0_SET_* mechanism is LEGACY in v2.8; model config is now file-based (plugin _model_config): /a0/usr/plugins/_model_config/{presets.yaml,config.json}",
+  "runtime_config_changes": [
+    "Wrote preset 'Local Ollama' in /usr/plugins/_model_config/presets.yaml (ollama qwen2.5-coder:14b chat+utility, api_base http://host.docker.internal:11434, local huggingface embeddings)",
+    "Wrote /usr/plugins/_model_config/config.json -> {\"model_preset\":\"Local Ollama\"}",
+    "Backups kept: presets.yaml.agenthost-eval.bak, .pre-unified-presets.bak"
+  ],
+  "api_credentials": {
+    "auth_model": "X-API-KEY header; token = base64url(sha256(runtime_id:auth_login:auth_password))[:16], changed when credentials change",
+    "eval_token": "generated at runtime with default (empty) credentials; NOTE: with empty UI credentials the token is stable and derived from public inputs - credentials should be set before any non-loopback exposure",
+    "invalid_key_response": "401"
+  },
+  "startup_command": "docker run -d --name a0-eval -p 5080:80 -v a0_eval_usr:/a0/usr -e A0_SET_... agent0ai/agent-zero:latest",
+  "startup_time_observed": "HTTP 200 on Web UI ~20s after container start",
+  "health_check": "GET http://localhost:5080 -> 200 when up; container logs show 'Agent Zero is running.' + 'Uvicorn running on http://0.0.0.0:80'; no dedicated /health endpoint observed",
+  "restart_behavior": "docker restart a0-eval: Web UI back to HTTP 200 within ~20-25s; volume data (presets, .env keys, workdir) persists",
+  "host_side_effects": [
+    "Docker Desktop (installed, previously stopped) was started; its WSL distros auto-started many pre-existing third-party containers on the host (user-authorized side effect)",
+    "Created named Docker volume a0_eval_usr (~ a few GB of user data)",
+    "Pulled 12.4 GB image"
+  ],
+  "rollback": [
+    "docker rm -f a0-eval",
+    "docker volume rm a0_eval_usr",
+    "docker image rm agent0ai/agent-zero",
+    "Stop Docker Desktop if desired"
+  ],
+  "windows_notes": [
+    "Docker Desktop + WSL2 backend required; works out of the box on Windows 11 Home",
+    "Model server on host reachable via http://host.docker.internal:11434 (verified usable for Ollama)",
+    "Full Linux desktop + LibreOffice are part of the image; Browser/Desktop surfaces are available in the Web UI",
+    "Non-Docker Windows 'native' path exists (dev-setup) but RFC (Remote Function Calls) is required there for shell; Docker path used and recommended"
+  ],
+  "model_configuration_requirements": {
+    "chat_llm": "Required. v2.8 unified_turn protocol requires strict tool-call JSON output; verified local 14B-class models fail the protocol on multi-tool flows (5x unusable-response guard), strong cloud models recommended by project",
+    "utility_llm": "Required; used for memory extraction/summarization each turn; project docs warn small models (<=4B) unreliable",
+    "embedding_llm": "Optional; default local huggingface sentence-transformers on CPU; observed auto-pull of bge-m3 (embedding) into host Ollama when huggingface provider unavailable in some config states"
+  }
+}
