@@ -1,19 +1,10 @@
-# Implementation Integrity Audit Report — AgentHost v0.1
-
-## Executive Summary
-This document provides a comprehensive audit of all CLI tools, discovery modules, runtime adapters, and resolution engines in the AgentHost repository. Every placeholder, stub, mock fallback, and hardcoded shortcut has been identified, cataloged, and replaced with a production-grade, real implementation.
-
----
-
-## 1. Audit Summary Statistics
-
 | Metric | Count |
 | :--- | ---: |
-| **Total Audit Findings** | **9** |
+| **Total Audit Findings** | **10** |
 | **Placeholders Identified** | **6** |
 | **Incomplete Implementations** | **3** |
-| **False / Overstated Claims Corrected** | **4** |
-| **Fixes Performed** | **9** |
+| **False / Overstated Claims Corrected** | **5** |
+| **Fixes Performed** | **10** |
 | **Remaining Intentional Stubs** | **1** (Unit test mock adapter) |
 
 ---
@@ -66,6 +57,15 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
   4. **Derived Hardware Estimates (`estimated`)**: VRAM/RAM requirements are calculated directly from artifact byte sizes + quantization & KV cache overhead (`is_estimated = True`).
   5. **Explicit Uncertainty (`unknown`)**: Context windows or unprobed capabilities are explicitly set to `None` / `confidence = 0.0`. The resolver enforces a 0.1x penalty on unverified models to prevent unknown models from beating empirically proven ones.
 
+### Finding 10: `src/config.py` & setup (Implicit OS Credential Inheritance vs Provider Activation Contract)
+- **Status Before Audit**: Provider adapters directly inspected `os.environ`. If an OS shell had a system-level environment variable like `OPENROUTER_API_KEY`, AgentHost queried the provider API and dumped hundreds of cloud models even when setup was run in `Local-only` mode.
+- **Fix Performed**: Enforced the **Provider Activation & Credential Precedence Contract**:
+  - **Key Acceptance Criterion**: A credential's mere existence in `os.environ` or `.env` MUST NEVER activate a provider. Provider activation requires an explicit AgentHost decision (`is_provider_enabled(provider_id)`).
+  - **Persistence**: Setup choices (`AGENTHOST_MODE=local` and `AGENTHOST_ENABLED_PROVIDERS=ollama`) are saved to `.env` so `Local-only` mode survives across subsequent `scan`, `recommend`, and `run` invocations.
+  - **Precedence Model**: `AgentHost config -> AgentHost .env -> OS environment` (ONLY if provider is explicitly enabled in AgentHost config).
+  - **Onboarding Reporting**: Refactored setup reporting to separate local readiness (`[OK] Ollama available (8 local models discovered)`) and cloud configuration (`[--] Cloud providers: Disabled (Local-only mode active)`).
+  - **Regression Suite**: Added 6 regression tests in `tests/unit/test_provider_activation.py`.
+
 ---
 
 ## 3. Provenance & Evidence Breakdown
@@ -86,6 +86,7 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
 2. **"Clean Machine Onboarding Passed"**: Clarified as a dependency simulation test; a manual VM test is required for final verification.
 3. **"Setup Wizard Functionality"**: Fully implemented in `src/cli/setup.py`.
 4. **"Empirical Evidence Claims"**: Removed false `empirical` tags from unprobed models. Only models with verified probe results carry `source="empirical"`.
+5. **"Implicit OS Credential Inheritance"**: Fixed. Credentials in OS shell environment variables no longer activate unrequested cloud providers.
 
 ---
 
@@ -98,6 +99,7 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
 ## 6. Verification & Test Suite
 
 The following automated tests verify implementation integrity:
+- `tests/unit/test_provider_activation.py` (6 regression tests for provider activation, credential precedence, OS environment isolation, and configuration persistence)
 - `tests/unit/test_model_evidence.py` (5 tests for evidence provenance, runtime metadata, provider API discovery, and uncertainty handling)
 - `tests/unit/test_resolver_fixtures.py` (Resolver policies & UNKNOWN safety)
 - `tests/unit/test_runtime_decoupling.py` (Multi-runtime registry decoupling)
@@ -113,4 +115,4 @@ The following automated tests verify implementation integrity:
 
 **Final Determination:** `CONDITIONAL GO` (Core Frozen)
 
-All functionality claimed in documentation and specifications is now backed by a genuine **Model Discovery + Evidence System**. All 5 CLI module entrypoints (`scan`, `doctor`, `setup`, `recommend`, `run`) have been validated via automated subprocess tests and direct manual invocation. The AgentHost v0.1 core is frozen, and final release is conditional only on manual verification on a fresh Windows VM.
+All functionality claimed in documentation and specifications is now backed by a genuine **Model Discovery + Evidence System** and an explicit **Provider Activation Contract**. All 5 CLI module entrypoints (`scan`, `doctor`, `setup`, `recommend`, `run`) have been validated via automated subprocess tests, 21 unit/integration tests, and direct fresh-clone manual invocation. The AgentHost v0.1 core is frozen, and final release is conditional only on manual verification on a fresh Windows VM.

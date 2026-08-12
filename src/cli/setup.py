@@ -16,17 +16,27 @@ def main():
     openai_key = input("   Enter your OpenAI API Key (or press Enter to skip): ").strip()
     
     env_lines = []
+    enabled_providers = ["ollama"]
+    
     if groq_key:
         env_lines.append(f"GROQ_API_KEY={groq_key}")
+        enabled_providers.append("groq")
     if openai_key:
         env_lines.append(f"OPENAI_API_KEY={openai_key}")
+        enabled_providers.append("openai")
         
     if env_lines:
-        with open(".env", "a") as f:
+        env_lines.append("AGENTHOST_MODE=cloud_hybrid")
+        env_lines.append(f"AGENTHOST_ENABLED_PROVIDERS={','.join(enabled_providers)}")
+        with open(".env", "a", encoding="utf-8") as f:
             f.write("\n" + "\n".join(env_lines) + "\n")
-        print("   [OK] API Keys securely stored in .env\n")
+        print("   [OK] API Keys and cloud hybrid configuration stored in .env\n")
     else:
-        print("   [OK] Skipping cloud configuration. Local-only mode enabled.\n")
+        env_lines.append("AGENTHOST_MODE=local")
+        env_lines.append("AGENTHOST_ENABLED_PROVIDERS=ollama")
+        with open(".env", "a", encoding="utf-8") as f:
+            f.write("\n" + "\n".join(env_lines) + "\n")
+        print("   [OK] Local-only mode enabled and persisted in .env\n")
 
     print("2. Environment Verification")
     builder = InventoryBuilder()
@@ -39,8 +49,15 @@ def main():
         else:
             print("   [WARN] Docker daemon is not running. Agent Zero execution will fail.")
             
-        print(f"   [OK] Scanned environment and found {len(inventory.models)} models.\n")
+        local_models = [m for m in inventory.models if m.provider.type == "local"]
+        cloud_models = [m for m in inventory.models if m.provider.type == "cloud"]
         
+        print(f"   [OK] Ollama available ({len(local_models)} local models discovered).")
+        if cloud_models:
+            print(f"   [OK] Cloud providers enabled ({len(cloud_models)} cloud models discovered).\n")
+        else:
+            print("   [--] Cloud providers: Disabled (Local-only mode active).\n")
+            
         print("Setup complete. AgentHost is ready to accept tasks.")
     except Exception as e:
         # Format friendly errors if things blow up

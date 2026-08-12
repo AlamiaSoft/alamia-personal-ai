@@ -11,6 +11,10 @@ class OllamaProviderAdapter(BaseProviderAdapter):
     def __init__(self, host: str = "http://127.0.0.1:11434"):
         self.host = host
 
+    @property
+    def provider_id(self) -> str:
+        return "ollama"
+
     def _get_tags(self) -> List[Dict[str, Any]]:
         url = f"{self.host}/api/tags"
         try:

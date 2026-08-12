@@ -2,15 +2,19 @@ import urllib.request
 import json
 from typing import List
 from .base import BaseProviderAdapter
-from ...config import get_config_key
+from ...config import get_credential, get_config_key
 from ...domain.schemas.model import (
     ModelProfile, ProviderInfo, HardwareRequirements,
     Capabilities, Context, Economics, Limits, Evidence
 )
 
 class OpenAIProviderAdapter(BaseProviderAdapter):
+    @property
+    def provider_id(self) -> str:
+        return "openai"
+
     def discover_models(self) -> List[ModelProfile]:
-        api_key = get_config_key("OPENAI_API_KEY")
+        api_key = get_credential("OPENAI_API_KEY", self.provider_id)
         if not api_key:
             return []
 
