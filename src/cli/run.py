@@ -6,8 +6,8 @@ from ..resolution.task_analyzer import TaskAnalyzer
 from ..resolution.preflight import PreflightEngine
 from ..adapters.agent_zero.api_bridge import APIBridge
 from ..domain.contract.runtime_adapter import ExecuteRequest
-
-from ..cli.formatter import ErrorFormatter, AgentHostError
+from ..domain.errors import AgentHostError
+from ..cli.formatter import ErrorFormatter
 
 def main():
     parser = argparse.ArgumentParser(description="AgentHost Run - Execute a task")

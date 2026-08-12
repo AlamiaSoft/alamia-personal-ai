@@ -9,11 +9,11 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
 
 | Metric | Count |
 | :--- | ---: |
-| **Total Audit Findings** | **7** |
+| **Total Audit Findings** | **8** |
 | **Placeholders Identified** | **5** |
 | **Incomplete Implementations** | **2** |
 | **False / Overstated Claims Corrected** | **3** |
-| **Fixes Performed** | **7** |
+| **Fixes Performed** | **8** |
 | **Remaining Intentional Stubs** | **1** (Unit test mock adapter) |
 
 ---
@@ -52,6 +52,13 @@ This document provides a comprehensive audit of all CLI tools, discovery modules
 - **Status Before Audit**: Printed raw unhandled error strings on execution failure.
 - **Fix Performed**: Integrated `ErrorFormatter` to display structured root causes, alternatives, and actionable remediation steps.
 
+### Finding 8: `src/cli/setup.py` & `src/cli/run.py` (P0 Import Mismatch & CP1252 Unicode Error)
+- **Status Before Audit**: `setup.py` and `run.py` attempted to import `AgentHostError` from `src.cli.formatter` instead of `src.domain.errors`. Additionally, non-ASCII symbols (`✓`, `⚠`, `→`) crashed Windows CP1252 console execution with `UnicodeEncodeError`.
+- **Fix Performed**: 
+  - Aligned `AgentHostError` in `src.domain.errors` and imported it correctly in all CLI modules.
+  - Replaced unicode characters with ASCII-safe strings (`[PASS]`, `[WARN]`, `[OK]`, `->`).
+  - Added `tests/e2e/test_cli_entrypoints.py` which executes all 5 CLI commands as true subprocesses (`python -m src.cli.<command>`) to guarantee entrypoint stability.
+
 ---
 
 ## 3. Overstated Validation Claims Corrected
@@ -85,6 +92,7 @@ The following automated tests verify implementation integrity:
 - `tests/integration/test_agent_zero_adapter.py` (Agent Zero container & bridge validation)
 - `tests/e2e/test_clean_onboarding.py` (Clean onboarding simulation)
 - `tests/e2e/test_happy_path_live.py` (End-to-end task execution pipeline)
+- `tests/e2e/test_cli_entrypoints.py` (Subprocess CLI entrypoint execution for all 5 commands)
 
 ---
 
@@ -92,4 +100,4 @@ The following automated tests verify implementation integrity:
 
 **Final Determination:** `CONDITIONAL GO` (Core Frozen)
 
-All functionality claimed in documentation and specifications is now fully implemented without mock fallbacks or fake success responses. The AgentHost v0.1 core is frozen, and final release is conditional only on manual verification on a fresh Windows VM.
+All functionality claimed in documentation and specifications is now fully implemented without mock fallbacks or fake success responses. All 5 CLI module entrypoints (`scan`, `doctor`, `setup`, `recommend`, `run`) have been validated via automated subprocess tests and direct manual invocation. The AgentHost v0.1 core is frozen, and final release is conditional only on manual verification on a fresh Windows VM.

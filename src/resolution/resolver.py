@@ -100,7 +100,7 @@ class ExecutionProfileResolver:
             
             candidates.append((score, profile))
             if model.evidence.confidence <= 0.40:
-                reasoning.append(f"⚠ Capability not verified (Confidence: {model.evidence.confidence:.2f})")
+                reasoning.append(f"[WARN] Capability not verified (Confidence: {model.evidence.confidence:.2f})")
             else:
                 reasoning.append(f"Score: {score:.2f}")
                 reasoning.append(f"Hardware fit: PASS")
@@ -108,9 +108,9 @@ class ExecutionProfileResolver:
                 
                 # Policy explanations
                 if mode == "local" and policy.local_preferred:
-                    reasoning.append("Local model is sufficient → use local.")
+                    reasoning.append("Local model is sufficient -> use local.")
                 elif mode == "cloud" and policy.local_preferred:
-                    reasoning.append("Local model could not satisfy requirements → cloud fallback required.")
+                    reasoning.append("Local model could not satisfy requirements -> cloud fallback required.")
                 
             explainability[model.id] = reasoning
 

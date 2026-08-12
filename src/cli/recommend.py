@@ -45,13 +45,13 @@ def main():
     print(f"Model\n  {top_profile.model.id}\n")
     print(f"Mode\n  {top_profile.model.provider.type.capitalize()}\n")
     
-    print("Why?")
-    reasons = explainability.get(top_profile.model.id, [])
-    for reason in reasons:
-        if "⚠" in reason:
+    print("\nWhy?")
+    rec_explain = explainability.get(top_profile.model.id, [])
+    for reason in rec_explain:
+        if "[WARN]" in reason:
             print(f"  {reason}")
         else:
-            print(f"  ✓ {reason}")
+            print(f"  [PASS] {reason}")
     print()
     
     if len(profiles) > 1:

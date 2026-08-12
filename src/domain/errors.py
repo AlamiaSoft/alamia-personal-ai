@@ -1,6 +1,23 @@
+from typing import List, Optional
+
 class AgentHostError(Exception):
-    """Base class for all AgentHost errors."""
-    pass
+    """Base class for all AgentHost errors with structured remediation support."""
+    def __init__(
+        self, 
+        message: str, 
+        error_type: Optional[str] = None,
+        action: Optional[str] = None, 
+        alternatives: Optional[List[str]] = None, 
+        reasons: Optional[List[str]] = None,
+        is_fatal: bool = False
+    ):
+        super().__init__(message)
+        self.message = message
+        self.error_type = error_type or type(self).__name__
+        self.action = action
+        self.alternatives = alternatives or []
+        self.reasons = reasons or []
+        self.is_fatal = is_fatal
 
 class DiscoveryError(AgentHostError):
     """Host hardware/environment discovery failed."""
@@ -12,9 +29,8 @@ class ConfigurationError(AgentHostError):
 
 class PreflightFailedError(AgentHostError):
     """Preflight validation failed (contains explicit reasons)."""
-    def __init__(self, message: str, reasons: list[str]):
-        super().__init__(message)
-        self.reasons = reasons
+    def __init__(self, message: str, reasons: List[str]):
+        super().__init__(message, reasons=reasons)
 
 class RuntimeUnavailableError(AgentHostError):
     """Candidate runtime container/process unready or unresponsive."""

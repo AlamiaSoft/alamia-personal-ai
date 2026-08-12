@@ -1,7 +1,8 @@
 import argparse
 import os
 from ..discovery.inventory import InventoryBuilder
-from ..cli.formatter import ErrorFormatter, AgentHostError
+from ..domain.errors import AgentHostError
+from ..cli.formatter import ErrorFormatter
 
 def main():
     parser = argparse.ArgumentParser(description="AgentHost Setup Wizard")
@@ -23,9 +24,9 @@ def main():
     if env_lines:
         with open(".env", "a") as f:
             f.write("\n" + "\n".join(env_lines) + "\n")
-        print("   ✓ API Keys securely stored in .env\n")
+        print("   [OK] API Keys securely stored in .env\n")
     else:
-        print("   ✓ Skipping cloud configuration. Local-only mode enabled.\n")
+        print("   [OK] Skipping cloud configuration. Local-only mode enabled.\n")
 
     print("2. Environment Verification")
     builder = InventoryBuilder()
@@ -34,11 +35,11 @@ def main():
         
         # Verify Docker
         if inventory.os_environment.get("docker_running", False):
-            print("   ✓ Docker connection verified.")
+            print("   [OK] Docker connection verified.")
         else:
-            print("   ⚠ WARNING: Docker daemon is not running. Agent Zero execution will fail.")
+            print("   [WARN] Docker daemon is not running. Agent Zero execution will fail.")
             
-        print(f"   ✓ Scanned environment and found {len(inventory.models)} models.\n")
+        print(f"   [OK] Scanned environment and found {len(inventory.models)} models.\n")
         
         print("Setup complete. AgentHost is ready to accept tasks.")
     except Exception as e:
