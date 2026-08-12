@@ -145,7 +145,7 @@ class ExecutionProfileResolver:
             gpu_str = inventory.hardware.gpu_model if inventory.hardware.gpu_model else "CPU"
             mem_str = f"{inventory.hardware.vram_gb:.1f} GB VRAM" if inventory.hardware.vram_gb else f"{inventory.hardware.ram_gb:.1f} GB RAM"
 
-            reasoning.append(f"Score: {score:.2f}")
+            reasoning.append(f"Structural Fit Score: {score:.2f}")
             if requirements.browser:
                 browser_src = f"{runtime_id} runtime" if runtime_caps.provides_browser else "Model"
                 reasoning.append(f"Browser -> {browser_src}")
@@ -156,11 +156,16 @@ class ExecutionProfileResolver:
                 fs_src = f"{runtime_id} runtime" if runtime_caps.provides_filesystem else "Model"
                 reasoning.append(f"Filesystem -> {fs_src}")
 
-            reasoning.append(f"Coding -> {model.id}")
+            if model.evidence.confidence > 0.40:
+                reasoning.append(f"Coding -> {model.id} (Empirically Verified)")
+            else:
+                reasoning.append(f"Coding task -> model capability unverified")
+
+            reasoning.append(f"Structural fit -> {model.id}")
             reasoning.append(f"Hardware -> {gpu_str} ({mem_str} available)")
 
             if model.evidence.confidence <= 0.40:
-                reasoning.append(f"[WARN] Best structural candidate - capability unverified (Confidence: {model.evidence.confidence:.2f})")
+                reasoning.append(f"[WARN] Capability evidence -> UNKNOWN (0%)")
                 
             explainability[model.id] = reasoning
 
